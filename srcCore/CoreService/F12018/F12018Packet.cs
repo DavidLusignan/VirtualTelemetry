@@ -1,9 +1,11 @@
-﻿namespace CoreService {
+﻿namespace CoreService.F12018 {
     class F12018Packet {
         public F12018PacketHeader header;
+        public F12018PacketData data;
 
-        public F12018Packet(F12018PacketHeader header) {
+        public F12018Packet(F12018PacketHeader header, F12018PacketData data) {
             this.header = header;
+            this.data = data;
         }
     }
 
