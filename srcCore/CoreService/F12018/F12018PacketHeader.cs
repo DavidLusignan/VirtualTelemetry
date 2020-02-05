@@ -1,5 +1,5 @@
 ﻿namespace CoreService {
-    struct F12018PacketHeader {
+    class F12018PacketHeader {
         public ushort packetFormat;
         public byte packetVersion;
         public byte packetId;
