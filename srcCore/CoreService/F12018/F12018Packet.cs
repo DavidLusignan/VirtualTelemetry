@@ -1,5 +1,5 @@
 ﻿namespace CoreService.F12018 {
-    class F12018Packet {
+    public class F12018Packet {
         public F12018PacketHeader header;
         public F12018PacketData data;
 

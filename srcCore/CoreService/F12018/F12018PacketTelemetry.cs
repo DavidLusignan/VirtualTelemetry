@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace CoreService.F12018 {
-    class F12018PacketData {
+    public class F12018PacketData {
 
     }
 
-    class F12018PacketTelemetry : F12018PacketData {
+    public class F12018PacketTelemetry : F12018PacketData {
         public ushort speed;
         public byte throttle;
 

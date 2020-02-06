@@ -5,16 +5,16 @@ using System;
 namespace CoreService {
     class Program {
         static void Main(string[] args) {
-            var factory = new F12018PacketFactory();
-            var udpReceiver = new VTUDPReceiver(20777, b => {
-                var test = factory.CreatePacket(b);
-                if (test.header.packetId == 6) {
-                    var data = (F12018PacketTelemetry)test.data;
-                    Console.WriteLine(data.speed);
+            var handler = new F12018PacketHandler(packet => {
+                if (packet.header.packetId == 6) {
+                    var telemetry = (F12018PacketTelemetry)packet.data;
+                Console.WriteLine(telemetry.speed);
                 }
             });
-            udpReceiver.Start();
-            while(true){}
+            handler.Start();
+            while(true){
+
+            }
         }
     }
 }
