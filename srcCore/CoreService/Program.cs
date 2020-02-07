@@ -6,9 +6,9 @@ namespace CoreService {
     class Program {
         static void Main(string[] args) {
             var handler = new F12018PacketHandler(packet => {
-                if (packet.header.packetId == 6) {
+                if (packet.header.packetId.Value == 6) {
                     var telemetry = (F12018PacketTelemetry)packet.data;
-                Console.WriteLine(telemetry.speed);
+                    Console.WriteLine(telemetry.throttle);
                 }
             });
             handler.Start();

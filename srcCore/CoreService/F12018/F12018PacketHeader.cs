@@ -1,21 +1,24 @@
-﻿namespace CoreService {
-    public class F12018PacketHeader {
-        public ushort packetFormat;
-        public byte packetVersion;
-        public byte packetId;
-        public ulong sessionUID;
-        public float sessionTime;
-        public uint frameIdentifier;
-        public byte playerCarIndex;
+﻿using Global.LazyByteData;
+using System;
 
-        public F12018PacketHeader(ushort packetFormat, byte packetVersion, byte packetId, ulong sessionUID, float sessionTime, uint frameIdentifier, byte playerCarIndex) {
-            this.packetFormat = packetFormat;
-            this.packetVersion = packetVersion;
-            this.packetId = packetId;
-            this.sessionUID = sessionUID;
-            this.sessionTime = sessionTime;
-            this.frameIdentifier = frameIdentifier;
-            this.playerCarIndex = playerCarIndex;
+namespace CoreService {
+    public class F12018PacketHeader {
+        public LazyUShort packetFormat;
+        public LazyByte packetVersion;
+        public LazyByte packetId;
+        public LazyULong sessionUID;
+        public LazyFloat sessionTime;
+        public LazyUInt frameIdentifier;
+        public LazyByte playerCarIndex;
+
+        public F12018PacketHeader(byte[] inputBytes) {
+            packetFormat = new LazyUShort(inputBytes, 0);
+            packetVersion = new LazyByte(inputBytes, 2);
+            packetId = new LazyByte(inputBytes, 3);
+            sessionUID = new LazyULong(inputBytes, 4);
+            sessionTime = new LazyFloat(inputBytes, 12);
+            frameIdentifier = new LazyUInt(inputBytes, 16);
+            playerCarIndex = new LazyByte(inputBytes, 20);
         }
     }
 }
