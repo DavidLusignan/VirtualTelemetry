@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Global.LazyByteData;
 
 namespace CoreService.F12018 {
     public class F12018PacketData {
@@ -8,12 +6,12 @@ namespace CoreService.F12018 {
     }
 
     public class F12018PacketTelemetry : F12018PacketData {
-        public ushort speed;
-        public byte throttle;
+        public LazyUShort speed;
+        public LazyByte throttle;
 
-        public F12018PacketTelemetry(ushort speed, byte throttle) {
-            this.speed = speed;
-            this.throttle = throttle;
+        public F12018PacketTelemetry(byte[] inputBytes) {
+            speed = new LazyUShort(inputBytes, 21);
+            throttle = new LazyByte(inputBytes, 23);
         }
     }
 }
