@@ -1,20 +1,24 @@
 ﻿using CoreService.Data;
+using Global;
 using Global.Networking.UDP;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace CoreService.F12018 {
-    public class F12018PacketHandler {
+    public class F12018PacketHandler : IObservable<DataState> {
+        const int DEFAULT_PORT = 20777;
+        private List<IObserver<DataState>> observers;
         VTUDPReceiver udpReceiver;
         F12018PacketFactory factory;
-        const int DEFAULT_PORT = 20777;
-        public F12018PacketHandler(Action<TelemetryState> onPacket) {
+
+        public F12018PacketHandler() {
             factory = new F12018PacketFactory();
+            observers = new List<IObserver<DataState>>();
             udpReceiver = new VTUDPReceiver(DEFAULT_PORT, b => {
                 var packet = factory.CreatePacket(b);
-                var standardData = F12018ToStandardDataConverter.ToTelemetry(packet.data);
-                onPacket(standardData);
+                var data = packet.ToStandardData();
+                observers.ForEach(o => o.OnNext(data));
             });
         }
 
@@ -24,6 +28,13 @@ namespace CoreService.F12018 {
 
         public void Stop() {
             udpReceiver.Stop();
+        }
+
+        public IDisposable Subscribe(IObserver<DataState> observer) {
+            if (!observers.Contains(observer)) {
+                observers.Add(observer);
+            }
+            return new Unsubscriber<DataState>(observers, observer);
         }
     }
 }
