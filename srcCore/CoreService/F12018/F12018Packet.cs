@@ -1,4 +1,7 @@
-﻿namespace CoreService.F12018 {
+﻿using CoreService.Data;
+using System;
+
+namespace CoreService.F12018 {
     public class F12018Packet {
         public F12018PacketHeader header;
         public F12018PacketData data;
@@ -6,6 +9,16 @@
         public F12018Packet(F12018PacketHeader header, F12018PacketData data) {
             this.header = header;
             this.data = data;
+        }
+
+        public DataState ToStandardData() {
+            var dataType = (F12018PacketType)header.packetId.Value;
+            switch(dataType) {
+                case F12018PacketType.CAR_TELEMETRY:
+                    return F12018ToStandardDataConverter.ToTelemetry(this);
+                default:
+                    throw new NotImplementedException();
+            }
         }
     }
 
