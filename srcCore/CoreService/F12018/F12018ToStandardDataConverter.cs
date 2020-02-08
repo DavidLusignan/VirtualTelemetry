@@ -10,5 +10,10 @@ namespace CoreService.F12018 {
             var throttleRatio = (float)F1Telemetry.throttle.Value / 100f;
             return new TelemetryState(packet.header.sessionTime.Value, throttleRatio, F1Telemetry.speed.Value);
         }
+
+        public static MotionState ToMotion(F12018Packet packet) {
+            var motionData = (F12018PacketMotion)packet.data;
+            return new MotionState(packet.header.sessionTime.Value, motionData.worldPositionX.Value, motionData.worldPositionY.Value, motionData.worldPositionZ.Value);
+        }
     }
 }

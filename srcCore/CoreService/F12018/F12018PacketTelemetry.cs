@@ -1,10 +1,6 @@
 ﻿using Global.LazyByteData;
 
 namespace CoreService.F12018 {
-    public class F12018PacketData {
-
-    }
-
     public class F12018PacketTelemetry : F12018PacketData {
         public LazyUShort speed;
         public LazyByte throttle;

@@ -11,6 +11,9 @@ namespace CoreService {
                 case F12018PacketType.CAR_TELEMETRY:
                     data = new F12018PacketTelemetry(bytes);
                     break;
+                case F12018PacketType.MOTION:
+                    data = new F12018PacketMotion(bytes);
+                    break;
                 default:
                     throw new InvalidEnumArgumentException();
             }

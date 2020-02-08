@@ -16,6 +16,8 @@ namespace CoreService.F12018 {
             switch(dataType) {
                 case F12018PacketType.CAR_TELEMETRY:
                     return F12018ToStandardDataConverter.ToTelemetry(this);
+                case F12018PacketType.MOTION:
+                    return F12018ToStandardDataConverter.ToMotion(this);
                 default:
                     throw new NotImplementedException();
             }
