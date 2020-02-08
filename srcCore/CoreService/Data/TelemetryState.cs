@@ -19,7 +19,7 @@ namespace CoreService.Data {
         }
 
         public override string ToString() {
-            return String.Format("Throttle Ratio : {0}; Speed : {1}", throttleRatio, speed);
+            return String.Format("Session Time : {0}; Throttle Ratio : {1}; Speed : {2}", sessionTime, throttleRatio, speed);
         }
     }
 }

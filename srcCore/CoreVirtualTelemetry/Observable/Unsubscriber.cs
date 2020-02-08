@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Global {
+namespace Global.Observable {
     public class Unsubscriber<T> : IDisposable {
         private List<IObserver<T>> _observers;
         private IObserver<T> _observer;
