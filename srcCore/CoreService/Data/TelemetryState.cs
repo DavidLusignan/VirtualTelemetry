@@ -3,11 +3,17 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace CoreService.Data {
-    public class TelemetryState {
+    public class DataState {
+
+    }
+
+    public class TelemetryState : DataState {
+        public float sessionTime;
         public float throttleRatio; // 0 to 1
         public float speed;
 
-        public TelemetryState(float throttleRatio, float speed) {
+        public TelemetryState(float sessionTime, float throttleRatio, float speed) {
+            this.sessionTime = sessionTime;
             this.throttleRatio = throttleRatio;
             this.speed = speed;
         }
