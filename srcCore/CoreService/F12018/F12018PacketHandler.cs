@@ -12,10 +12,10 @@ namespace CoreService.F12018 {
         VTUDPReceiver udpReceiver;
         F12018PacketFactory factory;
 
-        public F12018PacketHandler() {
+        public F12018PacketHandler(int listeningPort = DEFAULT_PORT) {
             factory = new F12018PacketFactory();
             observers = new List<IObserver<DataState>>();
-            udpReceiver = new VTUDPReceiver(DEFAULT_PORT, b => {
+            udpReceiver = new VTUDPReceiver(listeningPort, b => {
                 var packet = factory.CreatePacket(b);
                 var data = packet.ToStandardData();
                 observers.ForEach(o => o.OnNext(data));
