@@ -1,5 +1,5 @@
 ﻿namespace CoreService.Data {
-    public class DataState {
+    public abstract class DataState {
 
     }
 }
