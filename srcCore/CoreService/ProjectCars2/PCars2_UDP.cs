@@ -86,6 +86,7 @@ namespace PcarsUDP
         private float _SplitTimeBehind;
         private float _SplitTime;
         private double[,] _ParticipantInfo = new double[32, 16];
+        private double[,] _ParticipantStats = new double[32, 6];
 
 
 
@@ -105,14 +106,15 @@ namespace PcarsUDP
             if (PacketType == 0)
             {
                 ReadTelemetryData(stream, binaryReader);
-
-
             }
             else if (PacketType == 3)
             {
                 ReadTimings(stream, binaryReader);
             }
-
+            else if (PacketType == 7) 
+            {
+                ReadTimeStats(stream, binaryReader);
+            }
         }
 
         public void ReadBaseUDP(Stream stream, BinaryReader binaryReader)
@@ -341,7 +343,20 @@ namespace PcarsUDP
                 ParticipantInfo[i, 14] = Convert.ToDouble(binaryReader.ReadSingle()); //sCurrentTime
                 ParticipantInfo[i, 15] = Convert.ToDouble(binaryReader.ReadSingle());  //sCurrentSectorTime
             }
+        }
 
+        public void ReadTimeStats(Stream stream, BinaryReader binaryReader) {
+            stream.Position = 12;
+            ParticipantsChangedTimestamp = binaryReader.ReadUInt32();
+            for (int i = 0; i < 32; i++) 
+            {
+                ParticipantStats[i, 0] = Convert.ToDouble(binaryReader.ReadSingle()); //FastestLapTime
+                ParticipantStats[i, 1] = Convert.ToDouble(binaryReader.ReadSingle()); //LastLapTime
+                ParticipantStats[i, 2] = Convert.ToDouble(binaryReader.ReadSingle()); //LastSectorTime
+                ParticipantStats[i, 3] = Convert.ToDouble(binaryReader.ReadSingle()); //FastestSector1
+                ParticipantStats[i, 4] = Convert.ToDouble(binaryReader.ReadSingle()); //FastestSector2
+                ParticipantStats[i, 5] = Convert.ToDouble(binaryReader.ReadSingle()); //FastestSector3
+            }
         }
 
         public void close_UDP_Connection()
@@ -1222,6 +1237,18 @@ namespace PcarsUDP
             set
             {
                 _ParticipantInfo = value;
+            }
+        }
+
+        public double[,] ParticipantStats
+        {
+            get
+            {
+                return _ParticipantStats;
+            }
+            set
+            {
+                _ParticipantStats = value;
             }
         }
     }

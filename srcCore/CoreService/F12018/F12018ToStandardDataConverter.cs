@@ -8,7 +8,7 @@ namespace CoreService.F12018 {
         public static TelemetryState ToTelemetry(F12018Packet packet) {
             var F1Telemetry = (F12018PacketTelemetry)packet.data;
             var throttleRatio = ((float)F1Telemetry.throttle.Value) / 100f;
-            return new TelemetryState(packet.header.sessionTime.Value, throttleRatio, F1Telemetry.speed.Value);
+            throw new NotImplementedException();
         }
 
         public static MotionState ToMotion(F12018Packet packet) {

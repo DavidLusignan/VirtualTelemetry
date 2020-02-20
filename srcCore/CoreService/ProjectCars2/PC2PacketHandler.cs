@@ -30,7 +30,14 @@ namespace CoreService.ProjectCars2 {
                     try {
                         pcars2Udp.readPackets();
                         Task.Run(() => {
-                            var temp = new TelemetryState(pcars2Udp.ParticipantInfo[0, 14], pcars2Udp.Throttle, pcars2Udp.Speed);
+                            var lapNumber = pcars2Udp.ParticipantInfo[pcars2Udp.ViewedParticipantIndex, 13];
+                            var lastLapTime = pcars2Udp.ParticipantStats[pcars2Udp.ViewedParticipantIndex, 1];
+                            var sectorTimes = new Dictionary<int, double>();
+                            sectorTimes[0] = pcars2Udp.ParticipantStats[pcars2Udp.ViewedParticipantIndex, 3];
+                            sectorTimes[1] = pcars2Udp.ParticipantStats[pcars2Udp.ViewedParticipantIndex, 4];
+                            sectorTimes[2] = pcars2Udp.ParticipantStats[pcars2Udp.ViewedParticipantIndex, 5];
+                            var lastLapData = new LapData(lastLapTime, sectorTimes);
+                            var temp = new TelemetryState(lapNumber, lastLapData);
                             observers.ForEach(o => o.OnNext(temp));
                         });
                     } catch (Exception e) {
