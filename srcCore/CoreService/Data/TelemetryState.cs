@@ -4,11 +4,11 @@ using System.Text;
 
 namespace CoreService.Data {
     public class TelemetryState : DataState {
-        public float sessionTime;
-        public float throttleRatio; // 0 to 1
-        public float speed;
+        public double sessionTime;
+        public double throttleRatio; // 0 to 1
+        public double speed;
 
-        public TelemetryState(float sessionTime, float throttleRatio, float speed) {
+        public TelemetryState(double sessionTime, double throttleRatio, double speed) {
             this.sessionTime = sessionTime;
             this.throttleRatio = throttleRatio;
             this.speed = speed;
