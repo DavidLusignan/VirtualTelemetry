@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CoreService.ProjectCars2;
+using System;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -17,18 +18,20 @@ namespace PcarsUDP {
             _groupEP = group;
         }
 
-        public void readPackets() {
+        public PCars2Packet readPackets() {
             byte[] UDPpacket = _listener.Receive(ref _groupEP);
             Stream stream = new MemoryStream(UDPpacket);
             var binaryReader = new BinaryReader(stream);
 
             var baseUDP = ReadBaseUDP(stream, binaryReader);
             if (baseUDP.packetType == 0) {
-                ReadTelemetryData(stream, binaryReader, baseUDP);
+                return ReadTelemetryData(stream, binaryReader, baseUDP);
             } else if (baseUDP.packetType == 3) {
-                ReadTimings(stream, binaryReader, baseUDP);
+                return ReadTimings(stream, binaryReader, baseUDP);
             } else if (baseUDP.packetType == 7) {
-                ReadTimeStats(stream, binaryReader, baseUDP);
+                return ReadTimeStats(stream, binaryReader, baseUDP);
+            } else {
+                return null;
             }
         }
 
