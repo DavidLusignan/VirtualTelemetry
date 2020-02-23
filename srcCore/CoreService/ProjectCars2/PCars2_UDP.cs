@@ -11,16 +11,6 @@ namespace PcarsUDP {
         private UdpClient _listener;
         private IPEndPoint _groupEP;
 
-        //Timing
-        private sbyte _NumberParticipants;
-        private UInt32 _ParticipantsChangedTimestamp;
-        private float _EventTimeRemaining;
-        private float _SplitTimeAhead;
-        private float _SplitTimeBehind;
-        private float _SplitTime;
-        private double[,] _ParticipantInfo = new double[32, 16];
-        private double[,] _ParticipantStats = new double[32, 6];
-
 
         public PCars2_UDP(UdpClient listen, IPEndPoint group) {
             _listener = listen;
@@ -28,7 +18,7 @@ namespace PcarsUDP {
         }
 
         public void readPackets() {
-            byte[] UDPpacket = listener.Receive(ref _groupEP);
+            byte[] UDPpacket = _listener.Receive(ref _groupEP);
             Stream stream = new MemoryStream(UDPpacket);
             var binaryReader = new BinaryReader(stream);
 
@@ -242,111 +232,25 @@ namespace PcarsUDP {
             return timings;
         }
 
-        public void ReadTimeStats(Stream stream, BinaryReader binaryReader) {
-            stream.Position = 12;
-            ParticipantsChangedTimestamp = binaryReader.ReadUInt32();
-            for (int i = 0; i < 32; i++) {
-                ParticipantStats[i, 0] = Convert.ToDouble(binaryReader.ReadSingle()); //FastestLapTime
-                ParticipantStats[i, 1] = Convert.ToDouble(binaryReader.ReadSingle()); //LastLapTime
-                ParticipantStats[i, 2] = Convert.ToDouble(binaryReader.ReadSingle()); //LastSectorTime
-                ParticipantStats[i, 3] = Convert.ToDouble(binaryReader.ReadSingle()); //FastestSector1
-                ParticipantStats[i, 4] = Convert.ToDouble(binaryReader.ReadSingle()); //FastestSector2
-                ParticipantStats[i, 5] = Convert.ToDouble(binaryReader.ReadSingle()); //FastestSector3
-            }
+        public PCars2TimeStatsData ReadTimeStats(Stream stream, BinaryReader binaryReader) {
+            stream.Position = PCars2BaseUDP.PACKET_LENGTH;
+            var timeStatsData = new PCars2TimeStatsData();
+            timeStatsData.participantChangedTimestamp = binaryReader.ReadUInt32();
+            timeStatsData.participantStats = Enumerable.Range(0, PCars2TimeStatsData.MAX_PARTICIPANTS).Select(i => {
+                var participantStatsInfo = new PCars2ParticipantStatsInfo();
+                participantStatsInfo.fastestLapTime = binaryReader.ReadSingle();
+                participantStatsInfo.lastLapTime = binaryReader.ReadSingle();
+                participantStatsInfo.lastSectorTime = binaryReader.ReadSingle();
+                participantStatsInfo.fastestSector1 = binaryReader.ReadSingle();
+                participantStatsInfo.fastestSector2 = binaryReader.ReadSingle();
+                participantStatsInfo.fastestSector3 = binaryReader.ReadSingle();
+                return participantStatsInfo;
+            });
+            return timeStatsData;
         }
 
         public void close_UDP_Connection() {
-            listener.Close();
-        }
-
-        public UdpClient listener {
-            get {
-                return _listener;
-            }
-            set {
-                _listener = value;
-            }
-        }
-
-        public IPEndPoint groupEP {
-            get {
-                return _groupEP;
-            }
-            set {
-                _groupEP = value;
-            }
-        }
-
-        public sbyte NumberParticipants {
-            get {
-                return _NumberParticipants;
-            }
-            set {
-                _NumberParticipants = value;
-            }
-        }
-
-        public UInt32 ParticipantsChangedTimestamp {
-            get {
-                return _ParticipantsChangedTimestamp;
-            }
-            set {
-                _ParticipantsChangedTimestamp = value;
-            }
-        }
-
-        public float EventTimeRemaining {
-            get {
-                return _EventTimeRemaining;
-            }
-            set {
-                _EventTimeRemaining = value;
-            }
-        }
-
-        public float SplitTimeAhead {
-            get {
-                return _SplitTimeAhead;
-            }
-            set {
-                _SplitTimeAhead = value;
-            }
-        }
-
-        public float SplitTimeBehind {
-            get {
-                return _SplitTimeBehind;
-            }
-            set {
-                _SplitTimeBehind = value;
-            }
-        }
-
-        public float SplitTime {
-            get {
-                return _SplitTime;
-            }
-            set {
-                _SplitTime = value;
-            }
-        }
-
-        public double[,] ParticipantInfo {
-            get {
-                return _ParticipantInfo;
-            }
-            set {
-                _ParticipantInfo = value;
-            }
-        }
-
-        public double[,] ParticipantStats {
-            get {
-                return _ParticipantStats;
-            }
-            set {
-                _ParticipantStats = value;
-            }
+            _listener.Close();
         }
     }
 }
