@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 
@@ -19,7 +20,6 @@ namespace PcarsUDP {
         private float _SplitTime;
         private double[,] _ParticipantInfo = new double[32, 16];
         private double[,] _ParticipantStats = new double[32, 6];
-
 
 
         public PCars2_UDP(UdpClient listen, IPEndPoint group) {
@@ -206,35 +206,40 @@ namespace PcarsUDP {
             return telemetryData;
         }
 
-        public void ReadTimings(Stream stream, BinaryReader binaryReader) {
-            stream.Position = 12;
-            NumberParticipants = binaryReader.ReadSByte();
-            ParticipantsChangedTimestamp = binaryReader.ReadUInt32();
-            EventTimeRemaining = binaryReader.ReadSingle();
-            SplitTimeAhead = binaryReader.ReadSingle();
-            SplitTimeBehind = binaryReader.ReadSingle();
-            SplitTime = binaryReader.ReadSingle();
-
-            for (int i = 0; i < 32; i++) {
-                ParticipantInfo[i, 0] = Convert.ToDouble(binaryReader.ReadInt16());  //WorldPosition 
-                ParticipantInfo[i, 1] = Convert.ToDouble(binaryReader.ReadInt16());  //WorldPosition
-                ParticipantInfo[i, 2] = Convert.ToDouble(binaryReader.ReadInt16());  //WorldPosition
-                ParticipantInfo[i, 3] = Convert.ToDouble(binaryReader.ReadInt16());  //Orientation
-                ParticipantInfo[i, 4] = Convert.ToDouble(binaryReader.ReadInt16()); //Orientation 
-                ParticipantInfo[i, 5] = Convert.ToDouble(binaryReader.ReadInt16());  //Orientation
-                ParticipantInfo[i, 6] = Convert.ToDouble(binaryReader.ReadUInt16());  //sCurrentLapDistance
-                ParticipantInfo[i, 7] = Convert.ToDouble(binaryReader.ReadByte()) - 128;  //sRacePosition
+        public PCars2Timings ReadTimings(Stream stream, BinaryReader binaryReader) {
+            stream.Position = PCars2BaseUDP.PACKET_LENGTH;
+            var timings = new PCars2Timings();
+            timings.numberParticipants = binaryReader.ReadSByte();
+            timings.participantsChangedTimestamp = binaryReader.ReadUInt32();
+            timings.eventTimeRemaining = binaryReader.ReadSingle();
+            timings.splitTimeAhead = binaryReader.ReadSingle();
+            timings.splitTimeBehind = binaryReader.ReadSingle();
+            timings.splitTime = binaryReader.ReadSingle();
+            timings.participants = Enumerable.Range(0, PCars2Timings.MAX_PARTICIPANTS).Select(i => {
+                var participant = new PCars2ParticipantTiming();
+                participant.worldPositionX = binaryReader.ReadInt16();
+                participant.worldPositionY = binaryReader.ReadInt16();
+                participant.worldPositionZ = binaryReader.ReadInt16();
+                participant.orientationX = binaryReader.ReadInt16();
+                participant.orientationY = binaryReader.ReadInt16();
+                participant.orientationZ = binaryReader.ReadInt16();
+                participant.currentLapDistance = binaryReader.ReadUInt16();
+                var fullRacePosition = binaryReader.ReadByte();
+                participant.active = fullRacePosition >= 128;
+                participant.racePosition = fullRacePosition >= 128 ? (byte)(fullRacePosition - 128) : fullRacePosition;
                 byte Sector_ALL = binaryReader.ReadByte();
                 var Sector_Extracted = Sector_ALL & 0x0F;
-                ParticipantInfo[i, 8] = Convert.ToDouble(Sector_Extracted + 1);   //sSector
-                ParticipantInfo[i, 9] = Convert.ToDouble(binaryReader.ReadByte());  //sHighestFlag
-                ParticipantInfo[i, 10] = Convert.ToDouble(binaryReader.ReadByte()); //sPitModeSchedule
-                ParticipantInfo[i, 11] = Convert.ToDouble(binaryReader.ReadUInt16());//sCarIndex
-                ParticipantInfo[i, 12] = Convert.ToDouble(binaryReader.ReadByte()); //sRaceState
-                ParticipantInfo[i, 13] = Convert.ToDouble(binaryReader.ReadByte()); //sCurrentLap
-                ParticipantInfo[i, 14] = Convert.ToDouble(binaryReader.ReadSingle()); //sCurrentTime
-                ParticipantInfo[i, 15] = Convert.ToDouble(binaryReader.ReadSingle());  //sCurrentSectorTime
-            }
+                participant.sector = Sector_Extracted + 1;
+                participant.highestFlag = binaryReader.ReadByte();
+                participant.pitModeSchedule = binaryReader.ReadByte();
+                participant.carIndex = binaryReader.ReadUInt16();
+                participant.raceState = binaryReader.ReadByte();
+                participant.currentLap = binaryReader.ReadByte();
+                participant.currentTime = binaryReader.ReadSingle();
+                participant.currentSectorTime = binaryReader.ReadSingle();
+                return participant;
+            });
+            return timings;
         }
 
         public void ReadTimeStats(Stream stream, BinaryReader binaryReader) {
