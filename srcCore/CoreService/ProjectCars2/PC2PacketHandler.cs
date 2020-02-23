@@ -1,8 +1,10 @@
 ﻿using CoreService.Data;
+using Global.Enumerable;
 using Global.Observable;
 using PcarsUDP;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -28,23 +30,33 @@ namespace CoreService.ProjectCars2 {
             Task.Run(() => {
                 while(keepRunning) {
                     try {
-                        pcars2Udp.readPackets();
+                        var packet = pcars2Udp.readPackets();
                         Task.Run(() => {
-                            var lapNumber = pcars2Udp.ParticipantInfo[pcars2Udp.ViewedParticipantIndex, 13];
-                            var lastLapTime = pcars2Udp.ParticipantStats[pcars2Udp.ViewedParticipantIndex, 1];
-                            var sectorTimes = new Dictionary<int, double>();
-                            sectorTimes[0] = pcars2Udp.ParticipantStats[pcars2Udp.ViewedParticipantIndex, 3];
-                            sectorTimes[1] = pcars2Udp.ParticipantStats[pcars2Udp.ViewedParticipantIndex, 4];
-                            sectorTimes[2] = pcars2Udp.ParticipantStats[pcars2Udp.ViewedParticipantIndex, 5];
-                            var lastLapData = new LapData(lastLapTime, sectorTimes);
-                            var temp = new TelemetryState(lapNumber, lastLapData);
-                            observers.ForEach(o => o.OnNext(temp));
+                            if (packet != null) {
+                                switch (packet.baseUDP.packetType) {
+                                    case PCars2_UDP.PacketType.Telemetry:
+                                        var telemetry = (PCars2TelemetryData)packet;
+                                        NotifyAll(new ViewedParticipantIndexState(telemetry.viewedParticipantIndex));
+                                        break;
+                                    case PCars2_UDP.PacketType.Timings:
+                                        var timings = (PCars2Timings)packet;
+                                        timings.participants.ForEach(p => NotifyAll(new CurrentTimeState(p.currentTime, p.participantIndex)));
+                                        break;
+                                    case PCars2_UDP.PacketType.TimeStats:
+                                        var timeStats = (PCars2TimeStatsData)packet;
+                                        break;
+                                }
+                            }
                         });
                     } catch (Exception e) {
                         Console.WriteLine("Error while processing Project Cars 2 udp packets");
                     }
                 }
             });
+        }
+
+        private void NotifyAll(DataState dataState) {
+            observers.ForEach(o => o.OnNext(dataState));
         }
 
         public IDisposable Subscribe(IObserver<DataState> observer) {

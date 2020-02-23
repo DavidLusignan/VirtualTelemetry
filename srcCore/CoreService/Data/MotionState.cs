@@ -4,6 +4,7 @@ using System.Text;
 
 namespace CoreService.Data {
     public class MotionState : DataState {
+        public override DataStateType dataType => DataStateType.Motion;
         public float sessionTime;
         public float worldPositionX;
         public float worldPositionY;

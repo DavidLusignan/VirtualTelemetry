@@ -1,5 +1,6 @@
 ﻿namespace CoreService.ProjectCars2 {
     public struct PCars2ParticipantTiming {
+        public int participantIndex;
         public short worldPositionX;
         public short worldPositionY;
         public short worldPositionZ;

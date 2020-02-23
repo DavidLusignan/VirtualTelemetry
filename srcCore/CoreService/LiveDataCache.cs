@@ -7,15 +7,15 @@ using System.Text;
 
 namespace CoreService {
     public class LiveDataCache {
-        List<TelemetryState> dataCache;
+        List<object> dataCache;
         Dictionary<int, LapData> lapDatas;
 
         public LiveDataCache() {
-            dataCache = new List<TelemetryState>();
+            dataCache = new List<object>();
             lapDatas = new Dictionary<int, LapData>();
         }
 
-        public void AddData(TelemetryState state) {
+        public void AddData(object state) {
             dataCache.Add(state);
         }
 

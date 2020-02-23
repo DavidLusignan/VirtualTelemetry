@@ -7,10 +7,15 @@ using System.Net.Sockets;
 
 
 namespace PcarsUDP {
-    partial class PCars2_UDP {
+    public class PCars2_UDP {
 
         private UdpClient _listener;
         private IPEndPoint _groupEP;
+        public enum PacketType {
+            Telemetry = 0,
+            Timings = 3,
+            TimeStats = 7
+        }
 
 
         public PCars2_UDP(UdpClient listen, IPEndPoint group) {
@@ -24,11 +29,11 @@ namespace PcarsUDP {
             var binaryReader = new BinaryReader(stream);
 
             var baseUDP = ReadBaseUDP(stream, binaryReader);
-            if (baseUDP.packetType == 0) {
+            if (baseUDP.packetType == PacketType.Telemetry) {
                 return ReadTelemetryData(stream, binaryReader, baseUDP);
-            } else if (baseUDP.packetType == 3) {
+            } else if (baseUDP.packetType == PacketType.Timings) {
                 return ReadTimings(stream, binaryReader, baseUDP);
-            } else if (baseUDP.packetType == 7) {
+            } else if (baseUDP.packetType == PacketType.TimeStats) {
                 return ReadTimeStats(stream, binaryReader, baseUDP);
             } else {
                 return null;
@@ -211,6 +216,7 @@ namespace PcarsUDP {
             timings.splitTime = binaryReader.ReadSingle();
             timings.participants = Enumerable.Range(0, PCars2Timings.MAX_PARTICIPANTS).Select(i => {
                 var participant = new PCars2ParticipantTiming();
+                participant.participantIndex = i;
                 participant.worldPositionX = binaryReader.ReadInt16();
                 participant.worldPositionY = binaryReader.ReadInt16();
                 participant.worldPositionZ = binaryReader.ReadInt16();
@@ -243,6 +249,7 @@ namespace PcarsUDP {
             timeStatsData.participantChangedTimestamp = binaryReader.ReadUInt32();
             timeStatsData.participantStats = Enumerable.Range(0, PCars2TimeStatsData.MAX_PARTICIPANTS).Select(i => {
                 var participantStatsInfo = new PCars2ParticipantStatsInfo();
+                participantStatsInfo.participantIndex = i;
                 participantStatsInfo.fastestLapTime = binaryReader.ReadSingle();
                 participantStatsInfo.lastLapTime = binaryReader.ReadSingle();
                 participantStatsInfo.lastSectorTime = binaryReader.ReadSingle();

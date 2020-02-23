@@ -15,7 +15,7 @@ namespace CoreService.F12018 {
             var dataType = (F12018PacketType)header.packetId.Value;
             switch(dataType) {
                 case F12018PacketType.CAR_TELEMETRY:
-                    return F12018ToStandardDataConverter.ToTelemetry(this);
+                    throw new NotImplementedException();
                 case F12018PacketType.MOTION:
                     return F12018ToStandardDataConverter.ToMotion(this);
                 default:

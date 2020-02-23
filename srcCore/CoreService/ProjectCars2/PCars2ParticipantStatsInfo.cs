@@ -1,5 +1,6 @@
 ﻿namespace CoreService.ProjectCars2 {
     public struct PCars2ParticipantStatsInfo {
+        public int participantIndex;
         public float fastestLapTime;
         public float lastLapTime;
         public float lastSectorTime;
