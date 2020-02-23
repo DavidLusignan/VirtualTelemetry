@@ -196,9 +196,10 @@ namespace PcarsUDP {
             return telemetryData;
         }
 
-        public PCars2Timings ReadTimings(Stream stream, BinaryReader binaryReader) {
+        public PCars2Timings ReadTimings(Stream stream, BinaryReader binaryReader, PCars2BaseUDP baseUDP) {
             stream.Position = PCars2BaseUDP.PACKET_LENGTH;
             var timings = new PCars2Timings();
+            timings.baseUDP = baseUDP;
             timings.numberParticipants = binaryReader.ReadSByte();
             timings.participantsChangedTimestamp = binaryReader.ReadUInt32();
             timings.eventTimeRemaining = binaryReader.ReadSingle();
@@ -232,9 +233,10 @@ namespace PcarsUDP {
             return timings;
         }
 
-        public PCars2TimeStatsData ReadTimeStats(Stream stream, BinaryReader binaryReader) {
+        public PCars2TimeStatsData ReadTimeStats(Stream stream, BinaryReader binaryReader, PCars2BaseUDP baseUDP) {
             stream.Position = PCars2BaseUDP.PACKET_LENGTH;
             var timeStatsData = new PCars2TimeStatsData();
+            timeStatsData.baseUDP = baseUDP;
             timeStatsData.participantChangedTimestamp = binaryReader.ReadUInt32();
             timeStatsData.participantStats = Enumerable.Range(0, PCars2TimeStatsData.MAX_PARTICIPANTS).Select(i => {
                 var participantStatsInfo = new PCars2ParticipantStatsInfo();
