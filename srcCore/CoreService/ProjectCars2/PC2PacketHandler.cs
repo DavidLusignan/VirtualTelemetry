@@ -55,7 +55,7 @@ namespace CoreService.ProjectCars2 {
                             case PCars2_UDP.PacketType.TimeStats:
                                 var timeStats = (PCars2TimeStatsData)packet;
                                 timeStats.participantStats.ForEach(p => {
-                                    var state = new TimeState(p.lastLapTime, p.lastSectorTime);
+                                    var state = new TimeState(p.lastLapTime, p.lastSectorTime, p.participantIndex);
                                     NotifyAll(state);
                                 });
                                 break;

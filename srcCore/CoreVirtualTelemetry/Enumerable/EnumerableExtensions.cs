@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Global.Enumerable {
     public static class EnumerableExtensions {
-        public static Dictionary<K, V> ToDictionary<K, V>(this Dictionary<K, V> dic) {
+        public static Dictionary<K, V> ToDictionary<K, V>(this IDictionary<K, V> dic) {
             return dic.ToList().ToDictionary(kv => kv.Key, kv => kv.Value);
         }
 

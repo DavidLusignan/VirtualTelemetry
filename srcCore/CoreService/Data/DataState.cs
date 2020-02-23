@@ -27,9 +27,11 @@
         public override DataStateType dataType => DataStateType.Time;
         public float lastLapTime;
         public float lastSectorTime;
-        public TimeState(float lastLapTime, float lastSectorTime) {
+        public int participantIndex;
+        public TimeState(float lastLapTime, float lastSectorTime, int participantIndex) {
             this.lastLapTime = lastLapTime;
             this.lastSectorTime = lastSectorTime;
+            this.participantIndex = participantIndex;
         }
     }
 
