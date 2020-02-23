@@ -26,9 +26,9 @@ namespace PcarsUDP {
             if (baseUDP.packetType == 0) {
                 ReadTelemetryData(stream, binaryReader, baseUDP);
             } else if (baseUDP.packetType == 3) {
-                ReadTimings(stream, binaryReader);
+                ReadTimings(stream, binaryReader, baseUDP);
             } else if (baseUDP.packetType == 7) {
-                ReadTimeStats(stream, binaryReader);
+                ReadTimeStats(stream, binaryReader, baseUDP);
             }
         }
 
