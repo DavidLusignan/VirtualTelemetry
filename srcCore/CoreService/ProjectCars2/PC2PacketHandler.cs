@@ -29,30 +29,42 @@ namespace CoreService.ProjectCars2 {
             keepRunning = true;
             Task.Run(() => {
                 while(keepRunning) {
-                    try {
-                        var packet = pcars2Udp.readPackets();
-                        Task.Run(() => {
-                            if (packet != null) {
-                                switch (packet.baseUDP.packetType) {
-                                    case PCars2_UDP.PacketType.Telemetry:
-                                        var telemetry = (PCars2TelemetryData)packet;
-                                        NotifyAll(new ViewedParticipantIndexState(telemetry.viewedParticipantIndex));
-                                        break;
-                                    case PCars2_UDP.PacketType.Timings:
-                                        var timings = (PCars2Timings)packet;
-                                        timings.participants.ForEach(p => NotifyAll(new CurrentTimeState(p.currentTime, p.participantIndex)));
-                                        break;
-                                    case PCars2_UDP.PacketType.TimeStats:
-                                        var timeStats = (PCars2TimeStatsData)packet;
-                                        break;
-                                }
-                            }
-                        });
-                    } catch (Exception e) {
-                        Console.WriteLine("Error while processing Project Cars 2 udp packets");
-                    }
+                    HandlePacket();
                 }
             });
+        }
+
+        private void HandlePacket() {
+            try {
+                var packet = pcars2Udp.readPackets();
+                Task.Run(() => {
+                    if (packet != null) {
+                        switch (packet.baseUDP.packetType) {
+                            case PCars2_UDP.PacketType.Telemetry:
+                                var telemetry = (PCars2TelemetryData)packet;
+                                NotifyAll(new ViewedParticipantIndexState(telemetry.viewedParticipantIndex));
+                                break;
+                            case PCars2_UDP.PacketType.Timings:
+                                var timings = (PCars2Timings)packet;
+                                timings.participants.ForEach(p => { 
+                                    var state = new CurrentTimeState(p.currentTime, p.currentLap,
+                                        p.participantIndex);
+                                    NotifyAll(state);
+                                });
+                                break;
+                            case PCars2_UDP.PacketType.TimeStats:
+                                var timeStats = (PCars2TimeStatsData)packet;
+                                timeStats.participantStats.ForEach(p => {
+                                    var state = new TimeState(p.lastLapTime, p.lastSectorTime);
+                                    NotifyAll(state);
+                                });
+                                break;
+                        }
+                    }
+                });
+            } catch (Exception e) {
+                Console.WriteLine("Error while processing Project Cars 2 udp packets");
+            }
         }
 
         private void NotifyAll(DataState dataState) {

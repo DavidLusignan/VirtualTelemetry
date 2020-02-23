@@ -14,16 +14,29 @@
     public class CurrentTimeState : DataState {
         public override DataStateType dataType => DataStateType.CurrentTime;
         public float currentTime;
+        public byte currentLap;
         public int participantIndex;
-        public CurrentTimeState(float currentTime, int participantIndex) {
+        public CurrentTimeState(float currentTime, byte currentLap, int participantIndex) {
             this.currentTime = currentTime;
+            this.currentLap = currentLap;
             this.participantIndex = participantIndex;
+        }
+    }
+
+    public class TimeState : DataState {
+        public override DataStateType dataType => DataStateType.Time;
+        public float lastLapTime;
+        public float lastSectorTime;
+        public TimeState(float lastLapTime, float lastSectorTime) {
+            this.lastLapTime = lastLapTime;
+            this.lastSectorTime = lastSectorTime;
         }
     }
 
     public enum DataStateType {
         ViewedParticipant,
         Motion,
-        CurrentTime
+        CurrentTime,
+        Time
     }
 }
