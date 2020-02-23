@@ -4,11 +4,9 @@ using System.Net;
 using System.Net.Sockets;
 
 
-namespace PcarsUDP
-{
+namespace PcarsUDP {
 
-    class PCars2_UDP
-    {
+    class PCars2_UDP {
 
         private UdpClient _listener;
         private IPEndPoint _groupEP;
@@ -90,35 +88,27 @@ namespace PcarsUDP
 
 
 
-        public PCars2_UDP(UdpClient listen, IPEndPoint group)
-        {
+        public PCars2_UDP(UdpClient listen, IPEndPoint group) {
             _listener = listen;
             _groupEP = group;
         }
 
-        public void readPackets()
-        {
+        public void readPackets() {
             byte[] UDPpacket = listener.Receive(ref _groupEP);
             Stream stream = new MemoryStream(UDPpacket);
             var binaryReader = new BinaryReader(stream);
 
             ReadBaseUDP(stream, binaryReader);
-            if (PacketType == 0)
-            {
+            if (PacketType == 0) {
                 ReadTelemetryData(stream, binaryReader);
-            }
-            else if (PacketType == 3)
-            {
+            } else if (PacketType == 3) {
                 ReadTimings(stream, binaryReader);
-            }
-            else if (PacketType == 7) 
-            {
+            } else if (PacketType == 7) {
                 ReadTimeStats(stream, binaryReader);
             }
         }
 
-        public void ReadBaseUDP(Stream stream, BinaryReader binaryReader)
-        {
+        public void ReadBaseUDP(Stream stream, BinaryReader binaryReader) {
             stream.Position = 0;
             PacketNumber = binaryReader.ReadUInt32();
             CategoryPacketNumber = binaryReader.ReadUInt32();
@@ -128,8 +118,7 @@ namespace PcarsUDP
             PacketVersion = binaryReader.ReadByte();
         }
 
-        public void ReadTelemetryData(Stream stream, BinaryReader binaryReader)
-        {
+        public void ReadTelemetryData(Stream stream, BinaryReader binaryReader) {
             stream.Position = 12;
 
             ViewedParticipantIndex = binaryReader.ReadSByte();
@@ -312,8 +301,7 @@ namespace PcarsUDP
             Wings[1] = binaryReader.ReadByte();
         }
 
-        public void ReadTimings(Stream stream, BinaryReader binaryReader)
-        {
+        public void ReadTimings(Stream stream, BinaryReader binaryReader) {
             stream.Position = 12;
             NumberParticipants = binaryReader.ReadSByte();
             ParticipantsChangedTimestamp = binaryReader.ReadUInt32();
@@ -322,8 +310,7 @@ namespace PcarsUDP
             SplitTimeBehind = binaryReader.ReadSingle();
             SplitTime = binaryReader.ReadSingle();
 
-            for (int i = 0; i < 32; i++)
-            {
+            for (int i = 0; i < 32; i++) {
                 ParticipantInfo[i, 0] = Convert.ToDouble(binaryReader.ReadInt16());  //WorldPosition 
                 ParticipantInfo[i, 1] = Convert.ToDouble(binaryReader.ReadInt16());  //WorldPosition
                 ParticipantInfo[i, 2] = Convert.ToDouble(binaryReader.ReadInt16());  //WorldPosition
@@ -334,7 +321,7 @@ namespace PcarsUDP
                 ParticipantInfo[i, 7] = Convert.ToDouble(binaryReader.ReadByte()) - 128;  //sRacePosition
                 byte Sector_ALL = binaryReader.ReadByte();
                 var Sector_Extracted = Sector_ALL & 0x0F;
-                ParticipantInfo[i, 8] = Convert.ToDouble(Sector_Extracted+1);   //sSector
+                ParticipantInfo[i, 8] = Convert.ToDouble(Sector_Extracted + 1);   //sSector
                 ParticipantInfo[i, 9] = Convert.ToDouble(binaryReader.ReadByte());  //sHighestFlag
                 ParticipantInfo[i, 10] = Convert.ToDouble(binaryReader.ReadByte()); //sPitModeSchedule
                 ParticipantInfo[i, 11] = Convert.ToDouble(binaryReader.ReadUInt16());//sCarIndex
@@ -348,8 +335,7 @@ namespace PcarsUDP
         public void ReadTimeStats(Stream stream, BinaryReader binaryReader) {
             stream.Position = 12;
             ParticipantsChangedTimestamp = binaryReader.ReadUInt32();
-            for (int i = 0; i < 32; i++) 
-            {
+            for (int i = 0; i < 32; i++) {
                 ParticipantStats[i, 0] = Convert.ToDouble(binaryReader.ReadSingle()); //FastestLapTime
                 ParticipantStats[i, 1] = Convert.ToDouble(binaryReader.ReadSingle()); //LastLapTime
                 ParticipantStats[i, 2] = Convert.ToDouble(binaryReader.ReadSingle()); //LastSectorTime
@@ -359,895 +345,672 @@ namespace PcarsUDP
             }
         }
 
-        public void close_UDP_Connection()
-        {
+        public void close_UDP_Connection() {
             listener.Close();
         }
 
-        public UdpClient listener
-        {
-            get
-            {
+        public UdpClient listener {
+            get {
                 return _listener;
             }
-            set
-            {
+            set {
                 _listener = value;
             }
         }
 
-        public IPEndPoint groupEP
-        {
-            get
-            {
+        public IPEndPoint groupEP {
+            get {
                 return _groupEP;
             }
-            set
-            {
+            set {
                 _groupEP = value;
             }
         }
 
-        public UInt32 PacketNumber
-        {
-            get
-            {
+        public UInt32 PacketNumber {
+            get {
                 return _PacketNumber;
             }
-            set
-            {
+            set {
                 _PacketNumber = value;
             }
         }
 
-        public UInt32 CategoryPacketNumber
-        {
-            get
-            {
+        public UInt32 CategoryPacketNumber {
+            get {
                 return _CategoryPacketNumber;
             }
-            set
-            {
+            set {
                 _CategoryPacketNumber = value;
             }
         }
 
-        public byte PartialPacketIndex
-        {
-            get
-            {
+        public byte PartialPacketIndex {
+            get {
                 return _PartialPacketIndex;
             }
-            set
-            {
+            set {
                 _PartialPacketIndex = value;
             }
         }
 
-        public byte PartialPacketNumber
-        {
-            get
-            {
+        public byte PartialPacketNumber {
+            get {
                 return _PartialPacketNumber;
             }
-            set
-            {
+            set {
                 _PartialPacketNumber = value;
             }
         }
 
-        public byte PacketType
-        {
-            get
-            {
+        public byte PacketType {
+            get {
                 return _PacketType;
             }
-            set
-            {
+            set {
                 _PacketType = value;
             }
         }
 
-        public byte PacketVersion
-        {
-            get
-            {
+        public byte PacketVersion {
+            get {
                 return _PacketVersion;
             }
-            set
-            {
+            set {
                 _PacketVersion = value;
             }
         }
 
-        public sbyte ViewedParticipantIndex
-        {
-            get
-            {
+        public sbyte ViewedParticipantIndex {
+            get {
                 return _ViewedParticipantIndex;
             }
-            set
-            {
+            set {
                 _ViewedParticipantIndex = value;
             }
         }
 
-        public byte UnfilteredThrottle
-        {
-            get
-            {
+        public byte UnfilteredThrottle {
+            get {
                 return _UnfilteredThrottle;
             }
-            set
-            {
+            set {
                 _UnfilteredThrottle = value;
             }
         }
 
-        public byte UnfilteredBrake
-        {
-            get
-            {
+        public byte UnfilteredBrake {
+            get {
                 return _UnfilteredBrake;
             }
-            set
-            {
+            set {
                 _UnfilteredBrake = value;
             }
         }
 
-        public sbyte UnfilteredSteering
-        {
-            get
-            {
+        public sbyte UnfilteredSteering {
+            get {
                 return _UnfilteredSteering;
             }
-            set
-            {
+            set {
                 _UnfilteredSteering = value;
             }
         }
 
-        public byte UnfilteredClutch
-        {
-            get
-            {
+        public byte UnfilteredClutch {
+            get {
                 return _UnfilteredClutch;
             }
-            set
-            {
+            set {
                 _UnfilteredClutch = value;
             }
         }
 
-        public byte CarFlags
-        {
-            get
-            {
+        public byte CarFlags {
+            get {
                 return _CarFlags;
             }
-            set
-            {
+            set {
                 _CarFlags = value;
             }
         }
 
-        public Int16 OilTempCelsius
-        {
-            get
-            {
+        public Int16 OilTempCelsius {
+            get {
                 return _OilTempCelsius;
             }
-            set
-            {
+            set {
                 _OilTempCelsius = value;
             }
         }
 
-        public UInt16 OilPressureKPa
-        {
-            get
-            {
+        public UInt16 OilPressureKPa {
+            get {
                 return _OilPressureKPa;
             }
-            set
-            {
+            set {
                 _OilPressureKPa = value;
             }
         }
 
-        public Int16 WaterTempCelsius
-        {
-            get
-            {
+        public Int16 WaterTempCelsius {
+            get {
                 return _WaterTempCelsius;
             }
-            set
-            {
+            set {
                 _WaterTempCelsius = value;
             }
         }
 
-        public UInt16 WaterPressureKpa
-        {
-            get
-            {
+        public UInt16 WaterPressureKpa {
+            get {
                 return _WaterPressureKpa;
             }
-            set
-            {
+            set {
                 _WaterPressureKpa = value;
             }
         }
 
-        public UInt16 FuelPressureKpa
-        {
-            get
-            {
+        public UInt16 FuelPressureKpa {
+            get {
                 return _FuelPressureKpa;
             }
-            set
-            {
+            set {
                 _FuelPressureKpa = value;
             }
         }
 
-        public byte FuelCapacity
-        {
-            get
-            {
+        public byte FuelCapacity {
+            get {
                 return _FuelCapacity;
             }
-            set
-            {
+            set {
                 _FuelCapacity = value;
             }
         }
 
-        public byte Brake
-        {
-            get
-            {
+        public byte Brake {
+            get {
                 return _Brake;
             }
-            set
-            {
+            set {
                 _Brake = value;
             }
         }
 
-        public byte Throttle
-        {
-            get
-            {
+        public byte Throttle {
+            get {
                 return _Throttle;
             }
-            set
-            {
+            set {
                 _Throttle = value;
             }
         }
 
-        public byte Clutch
-        {
-            get
-            {
+        public byte Clutch {
+            get {
                 return _Clutch;
             }
-            set
-            {
+            set {
                 _Clutch = value;
             }
         }
 
-        public float FuelLevel
-        {
-            get
-            {
+        public float FuelLevel {
+            get {
                 return _FuelLevel;
             }
-            set
-            {
+            set {
                 _FuelLevel = value;
             }
         }
 
-        public float Speed
-        {
-            get
-            {
+        public float Speed {
+            get {
                 return _Speed;
             }
-            set
-            {
+            set {
                 _Speed = value;
             }
         }
 
-        public UInt16 Rpm
-        {
-            get
-            {
+        public UInt16 Rpm {
+            get {
                 return _Rpm;
             }
-            set
-            {
+            set {
                 _Rpm = value;
             }
         }
 
-        public UInt16 MaxRpm
-        {
-            get
-            {
+        public UInt16 MaxRpm {
+            get {
                 return _MaxRpm;
             }
-            set
-            {
+            set {
                 _MaxRpm = value;
             }
         }
 
-        public sbyte Steering
-        {
-            get
-            {
+        public sbyte Steering {
+            get {
                 return _Steering;
             }
-            set
-            {
+            set {
                 _Steering = value;
             }
         }
 
-        public byte GearNumGears
-        {
-            get
-            {
+        public byte GearNumGears {
+            get {
                 return _GearNumGears;
             }
-            set
-            {
+            set {
                 _GearNumGears = value;
             }
         }
 
-        public byte BoostAmount
-        {
-            get
-            {
+        public byte BoostAmount {
+            get {
                 return _BoostAmount;
             }
-            set
-            {
+            set {
                 _BoostAmount = value;
             }
         }
 
-        public byte CrashState
-        {
-            get
-            {
+        public byte CrashState {
+            get {
                 return _CrashState;
             }
-            set
-            {
+            set {
                 _CrashState = value;
             }
         }
 
-        public float OdometerKM
-        {
-            get
-            {
+        public float OdometerKM {
+            get {
                 return _OdometerKM;
             }
-            set
-            {
+            set {
                 _OdometerKM = value;
             }
         }
 
-        public float[] Orientation
-        {
-            get
-            {
+        public float[] Orientation {
+            get {
                 return _Orientation;
             }
-            set
-            {
+            set {
                 _Orientation = value;
             }
         }
 
-        public float[] LocalVelocity
-        {
-            get
-            {
+        public float[] LocalVelocity {
+            get {
                 return _LocalVelocity;
             }
-            set
-            {
+            set {
                 _LocalVelocity = value;
             }
         }
 
-        public float[] WorldVelocity
-        {
-            get
-            {
+        public float[] WorldVelocity {
+            get {
                 return _WorldVelocity;
             }
-            set
-            {
+            set {
                 _WorldVelocity = value;
             }
         }
 
-        public float[] AngularVelocity
-        {
-            get
-            {
+        public float[] AngularVelocity {
+            get {
                 return _AngularVelocity;
             }
-            set
-            {
+            set {
                 _AngularVelocity = value;
             }
         }
 
-        public float[] LocalAcceleration
-        {
-            get
-            {
+        public float[] LocalAcceleration {
+            get {
                 return _LocalAcceleration;
             }
-            set
-            {
+            set {
                 _LocalAcceleration = value;
             }
         }
 
-        public float[] WorldAcceleration
-        {
-            get
-            {
+        public float[] WorldAcceleration {
+            get {
                 return _WorldAcceleration;
             }
-            set
-            {
+            set {
                 _WorldAcceleration = value;
             }
         }
 
-        public float[] ExtentsCentre
-        {
-            get
-            {
+        public float[] ExtentsCentre {
+            get {
                 return _ExtentsCentre;
             }
-            set
-            {
+            set {
                 _ExtentsCentre = value;
             }
         }
 
-        public byte[] TyreFlags
-        {
-            get
-            {
+        public byte[] TyreFlags {
+            get {
                 return _TyreFlags;
             }
-            set
-            {
+            set {
                 _TyreFlags = value;
             }
         }
 
-        public byte[] Terrain
-        {
-            get
-            {
+        public byte[] Terrain {
+            get {
                 return _Terrain;
             }
-            set
-            {
+            set {
                 _Terrain = value;
             }
         }
 
-        public float[] TyreY
-        {
-            get
-            {
+        public float[] TyreY {
+            get {
                 return _TyreY;
             }
-            set
-            {
+            set {
                 _TyreY = value;
             }
         }
 
-        public float[] TyreRPS
-        {
-            get
-            {
+        public float[] TyreRPS {
+            get {
                 return _TyreRPS;
             }
-            set
-            {
+            set {
                 _TyreRPS = value;
             }
         }
 
-        public byte[] TyreTemp
-        {
-            get
-            {
+        public byte[] TyreTemp {
+            get {
                 return _TyreTemp;
             }
-            set
-            {
+            set {
                 _TyreTemp = value;
             }
         }
 
-        public float[] TyreHeightAboveGround
-        {
-            get
-            {
+        public float[] TyreHeightAboveGround {
+            get {
                 return _TyreHeightAboveGround;
             }
-            set
-            {
+            set {
                 _TyreHeightAboveGround = value;
             }
         }
 
-        public byte[] TyreWear
-        {
-            get
-            {
+        public byte[] TyreWear {
+            get {
                 return _TyreWear;
             }
-            set
-            {
+            set {
                 _TyreWear = value;
             }
         }
 
-        public byte[] BrakeDamage
-        {
-            get
-            {
+        public byte[] BrakeDamage {
+            get {
                 return _BrakeDamage;
             }
-            set
-            {
+            set {
                 _BrakeDamage = value;
             }
         }
 
-        public byte[] SuspensionDamage
-        {
-            get
-            {
+        public byte[] SuspensionDamage {
+            get {
                 return _SuspensionDamage;
             }
-            set
-            {
+            set {
                 _SuspensionDamage = value;
             }
         }
 
-        public Int16[] BrakeTempCelsius
-        {
-            get
-            {
+        public Int16[] BrakeTempCelsius {
+            get {
                 return _BrakeTempCelsius;
             }
-            set
-            {
+            set {
                 _BrakeTempCelsius = value;
             }
         }
 
-        public UInt16[] TyreTreadTemp
-        {
-            get
-            {
+        public UInt16[] TyreTreadTemp {
+            get {
                 return _TyreTreadTemp;
             }
-            set
-            {
+            set {
                 _TyreTreadTemp = value;
             }
         }
 
-        public UInt16[] TyreLayerTemp
-        {
-            get
-            {
+        public UInt16[] TyreLayerTemp {
+            get {
                 return _TyreLayerTemp;
             }
-            set
-            {
+            set {
                 _TyreLayerTemp = value;
             }
         }
 
-        public UInt16[] TyreCarcassTemp
-        {
-            get
-            {
+        public UInt16[] TyreCarcassTemp {
+            get {
                 return _TyreCarcassTemp;
             }
-            set
-            {
+            set {
                 _TyreCarcassTemp = value;
             }
         }
 
-        public UInt16[] TyreRimTemp
-        {
-            get
-            {
+        public UInt16[] TyreRimTemp {
+            get {
                 return _TyreRimTemp;
             }
-            set
-            {
+            set {
                 _TyreRimTemp = value;
             }
         }
 
-        public UInt16[] TyreInternalAirTemp
-        {
-            get
-            {
+        public UInt16[] TyreInternalAirTemp {
+            get {
                 return _TyreInternalAirTemp;
             }
-            set
-            {
+            set {
                 _TyreInternalAirTemp = value;
             }
         }
 
-        public UInt16[] TyreTempLeft
-        {
-            get
-            {
+        public UInt16[] TyreTempLeft {
+            get {
                 return _TyreTempLeft;
             }
-            set
-            {
+            set {
                 _TyreTempLeft = value;
             }
         }
 
-        public UInt16[] TyreTempCenter
-        {
-            get
-            {
+        public UInt16[] TyreTempCenter {
+            get {
                 return _TyreTempCenter;
             }
-            set
-            {
+            set {
                 _TyreTempCenter = value;
             }
         }
 
-        public UInt16[] TyreTempRight
-        {
-            get
-            {
+        public UInt16[] TyreTempRight {
+            get {
                 return _TyreTempRight;
             }
-            set
-            {
+            set {
                 _TyreTempRight = value;
             }
         }
 
-        public float[] WheelLocalPositionY
-        {
-            get
-            {
+        public float[] WheelLocalPositionY {
+            get {
                 return _WheelLocalPositionY;
             }
-            set
-            {
+            set {
                 _WheelLocalPositionY = value;
             }
         }
 
-        public float[] RideHeight
-        {
-            get
-            {
+        public float[] RideHeight {
+            get {
                 return _RideHeight;
             }
-            set
-            {
+            set {
                 _RideHeight = value;
             }
         }
 
-        public float[] SuspensionTravel
-        {
-            get
-            {
+        public float[] SuspensionTravel {
+            get {
                 return _SuspensionTravel;
             }
-            set
-            {
+            set {
                 _SuspensionTravel = value;
             }
         }
 
-        public float[] SuspensionVelocity
-        {
-            get
-            {
+        public float[] SuspensionVelocity {
+            get {
                 return _SuspensionVelocity;
             }
-            set
-            {
+            set {
                 _SuspensionVelocity = value;
             }
         }
 
-        public UInt16[] SuspensionRideHeight
-        {
-            get
-            {
+        public UInt16[] SuspensionRideHeight {
+            get {
                 return _SuspensionRideHeight;
             }
-            set
-            {
+            set {
                 _SuspensionRideHeight = value;
             }
         }
 
-        public UInt16[] AirPressure
-        {
-            get
-            {
+        public UInt16[] AirPressure {
+            get {
                 return _AirPressure;
             }
-            set
-            {
+            set {
                 _AirPressure = value;
             }
         }
 
-        public float EngineSpeed
-        {
-            get
-            {
+        public float EngineSpeed {
+            get {
                 return _EngineSpeed;
             }
-            set
-            {
+            set {
                 _EngineSpeed = value;
             }
         }
 
-        public float EngineTorque
-        {
-            get
-            {
+        public float EngineTorque {
+            get {
                 return _EngineTorque;
             }
-            set
-            {
+            set {
                 _EngineTorque = value;
             }
         }
 
-        public byte[] Wings
-        {
-            get
-            {
+        public byte[] Wings {
+            get {
                 return _Wings;
             }
-            set
-            {
+            set {
                 _Wings = value;
             }
         }
 
-        public sbyte NumberParticipants
-        {
-            get
-            {
+        public sbyte NumberParticipants {
+            get {
                 return _NumberParticipants;
             }
-            set
-            {
+            set {
                 _NumberParticipants = value;
             }
         }
 
-        public UInt32 ParticipantsChangedTimestamp
-        {
-            get
-            {
+        public UInt32 ParticipantsChangedTimestamp {
+            get {
                 return _ParticipantsChangedTimestamp;
             }
-            set
-            {
+            set {
                 _ParticipantsChangedTimestamp = value;
             }
         }
 
-        public float EventTimeRemaining
-        {
-            get
-            {
+        public float EventTimeRemaining {
+            get {
                 return _EventTimeRemaining;
             }
-            set
-            {
+            set {
                 _EventTimeRemaining = value;
             }
         }
 
-        public float SplitTimeAhead
-        {
-            get
-            {
+        public float SplitTimeAhead {
+            get {
                 return _SplitTimeAhead;
             }
-            set
-            {
+            set {
                 _SplitTimeAhead = value;
             }
         }
 
-        public float SplitTimeBehind
-        {
-            get
-            {
+        public float SplitTimeBehind {
+            get {
                 return _SplitTimeBehind;
             }
-            set
-            {
+            set {
                 _SplitTimeBehind = value;
             }
         }
 
-        public float SplitTime
-        {
-            get
-            {
+        public float SplitTime {
+            get {
                 return _SplitTime;
             }
-            set
-            {
+            set {
                 _SplitTime = value;
             }
         }
 
-        public double[,] ParticipantInfo
-        {
-            get
-            {
+        public double[,] ParticipantInfo {
+            get {
                 return _ParticipantInfo;
             }
-            set
-            {
+            set {
                 _ParticipantInfo = value;
             }
         }
 
-        public double[,] ParticipantStats
-        {
-            get
-            {
+        public double[,] ParticipantStats {
+            get {
                 return _ParticipantStats;
             }
-            set
-            {
+            set {
                 _ParticipantStats = value;
             }
         }
