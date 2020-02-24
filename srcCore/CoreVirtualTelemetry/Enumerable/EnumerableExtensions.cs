@@ -23,8 +23,8 @@ namespace Global.Enumerable {
             return source.Where(kv => !kv.Key.Equals(key)).ToDictionary();
         }
 
-        public static IDictionary<K, V> Concat<K, V>(this IDictionary<K, V> source, KeyValuePair<K, V> newItem) {
-            return source.Concat(new[] { newItem }).ToDictionary();
+        public static IDictionary<K, V> Concat<K, V>(this IDictionary<K, V> source, K key, V value) {
+            return source.Concat(new[] { new KeyValuePair<K, V>(key, value) }).ToDictionary();
         }
 
         public static IEnumerable<T> Concat<T>(this IEnumerable<T> source, T item) {
