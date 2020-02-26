@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace CoreService {
-    public class LapTimeCache {
+    public class PC2LapTimeHandler {
         private object _stateLock = new object();
         public IEnumerable<ParticipantLapTimes> lapTimes { get; private set; }
-        public LapTimeCache(IObservable<DataState> packetHandler) {
+        public PC2LapTimeHandler(IObservable<DataState> packetHandler) {
             lapTimes = new List<ParticipantLapTimes>();
             packetHandler.Subscribe(new Observer<DataState>(OnState));
         }
