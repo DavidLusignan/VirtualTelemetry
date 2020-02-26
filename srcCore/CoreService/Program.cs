@@ -14,7 +14,7 @@ namespace CoreService {
         static void Main(string[] args) {
             var cache = new LiveDataCache();
             var handler = new PC2PacketHandler();
-            var lapTimeCache = new LapTimeCache(handler);
+            var lapTimeCache = new PC2LapTimeHandler(handler);
             handler.Start();
             while(true){
                 Console.WriteLine("Enter to dump");
