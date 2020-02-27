@@ -64,6 +64,7 @@ namespace CoreService.ProjectCars2 {
                 });
             } catch (Exception e) {
                 Console.WriteLine("Error while processing Project Cars 2 udp packets");
+                Console.WriteLine(e.Message);
             }
         }
 
