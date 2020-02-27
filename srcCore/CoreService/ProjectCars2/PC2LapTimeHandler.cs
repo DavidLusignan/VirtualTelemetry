@@ -1,4 +1,5 @@
 ﻿using CoreService.Data;
+using CoreService.Storage;
 using Global.Enumerable;
 using Global.Observable;
 using System;
@@ -23,7 +24,7 @@ namespace CoreService {
                         if (lapTimes.Any(l => l.participantIndex.Equals(time.participantIndex))) {
                             current = lapTimes.First(l => l.participantIndex.Equals(time.participantIndex));
                         } else {
-                            current = new ParticipantLapTimes(time.participantIndex, new Dictionary<int, ParticipantLapTime>());
+                            current = new ParticipantLapTimes(Key.Create(), time.participantIndex, new Dictionary<int, ParticipantLapTime>());
                         }
                         var updated = current.InsertIfNewTime(time);
                         lapTimes = lapTimes.Except(current).Concat(updated);

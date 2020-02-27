@@ -9,7 +9,7 @@ namespace CoreService.Storage {
         IEnumerable<T> LoadAll();
         void Store(T item);
         void Update(T item);
-        void Delete(Guid id);
+        void Delete(Key key);
     }
 
     public class CollectionStore<T> : IStore<T> {
@@ -18,8 +18,8 @@ namespace CoreService.Storage {
             _collection = db.GetCollection<T>();
         }
 
-        public void Delete(Guid id) {
-            var bytes = id.ToByteArray();
+        public void Delete(Key key) {
+            var bytes = key.AsLiteDB().ToByteArray();
             var objectId = new ObjectId(bytes, 4);
             _collection.Delete(objectId);
         }
