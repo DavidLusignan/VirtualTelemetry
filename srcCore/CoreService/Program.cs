@@ -7,8 +7,6 @@ using System.Linq;
 
 namespace CoreService {
     class Program {
-        static int viewedParticipant = -1;
-        static int previousLap => currentLap - 1;
         static int currentLap = -1;
         static IDictionary<int, float> lapTimes = new Dictionary<int, float>();
         static void Main(string[] args) {
