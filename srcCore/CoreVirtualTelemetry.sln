@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Global", "CoreVirtualTeleme
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreService", "CoreService\CoreService.csproj", "{85D15D4A-6122-4655-AC04-57101B213440}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreServiceTests", "NUnitTestProject1\CoreServiceTests.csproj", "{46793E6F-EC9D-4203-94B0-7FD23C1DC74C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreServiceTests", "CoreServiceTests\CoreServiceTests.csproj", "{46793E6F-EC9D-4203-94B0-7FD23C1DC74C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
