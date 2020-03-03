@@ -1,5 +1,6 @@
 ﻿using CoreService.Data;
 using CoreService.Storage;
+using CoreService.Storage.DTOs;
 using Global.Enumerable;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +41,10 @@ namespace CoreService {
             } else {
                 return this;
             }
+        }
+
+        internal ParticipantLapTimesDTO DTO() {
+            return new ParticipantLapTimesDTO(key, participantIndex, lapTimes);
         }
 
         private ParticipantLapTime CurrentLap() {
