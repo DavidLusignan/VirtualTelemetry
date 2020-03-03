@@ -14,9 +14,9 @@ namespace CoreService {
         static void Main(string[] args) {
             DTOBsonConversion.Setup();
             var cache = new LiveDataCache();
-            var handler = new PC2PacketHandler();
+            var handler = new PC2PacketParser();
             var db = new LiteDatabase("storage.db");
-            var lapTimeCache = new PC2LapTimeHandler(handler, db);
+            var lapTimeCache = new PC2StdLapTimeConvertor(handler, db);
             handler.Start();
             while(true){
                 Console.WriteLine("Enter to dump");

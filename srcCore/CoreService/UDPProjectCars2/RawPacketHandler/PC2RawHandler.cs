@@ -7,7 +7,7 @@ using System.Net.Sockets;
 
 
 namespace PcarsUDP {
-    public class PCars2_UDP {
+    public class PC2RawHandler {
 
         private UdpClient _listener;
         private IPEndPoint _groupEP;
@@ -18,12 +18,12 @@ namespace PcarsUDP {
         }
 
 
-        public PCars2_UDP(UdpClient listen, IPEndPoint group) {
+        public PC2RawHandler(UdpClient listen, IPEndPoint group) {
             _listener = listen;
             _groupEP = group;
         }
 
-        public PCars2Packet readPackets() {
+        public PC2RawPacket readPackets() {
             byte[] UDPpacket = _listener.Receive(ref _groupEP);
             Stream stream = new MemoryStream(UDPpacket);
             var binaryReader = new BinaryReader(stream);
@@ -40,7 +40,7 @@ namespace PcarsUDP {
             }
         }
 
-        public PCars2BaseUDP ReadBaseUDP(Stream stream, BinaryReader binaryReader) {
+        public PC2RawPacketMeta ReadBaseUDP(Stream stream, BinaryReader binaryReader) {
             stream.Position = 0;
             var packetNumber = binaryReader.ReadUInt32();
             var categoryPacketNumber = binaryReader.ReadUInt32();
@@ -49,11 +49,11 @@ namespace PcarsUDP {
             var packetType = binaryReader.ReadByte();
             var packetVersion = binaryReader.ReadByte();
 
-            return new PCars2BaseUDP(packetNumber, categoryPacketNumber, partialPacketIndex, partialPacketNumber, packetType, packetVersion);
+            return new PC2RawPacketMeta(packetNumber, categoryPacketNumber, partialPacketIndex, partialPacketNumber, packetType, packetVersion);
         }
 
-        public PCars2TelemetryData ReadTelemetryData(Stream stream, BinaryReader binaryReader, PCars2BaseUDP baseUDP) {
-            stream.Position = PCars2BaseUDP.PACKET_LENGTH;
+        public PCars2TelemetryData ReadTelemetryData(Stream stream, BinaryReader binaryReader, PC2RawPacketMeta baseUDP) {
+            stream.Position = PC2RawPacketMeta.PACKET_LENGTH;
             var telemetryData = new PCars2TelemetryData();
             telemetryData.baseUDP = baseUDP;
             telemetryData.viewedParticipantIndex = binaryReader.ReadSByte();
@@ -204,8 +204,8 @@ namespace PcarsUDP {
             return telemetryData;
         }
 
-        public PCars2Timings ReadTimings(Stream stream, BinaryReader binaryReader, PCars2BaseUDP baseUDP) {
-            stream.Position = PCars2BaseUDP.PACKET_LENGTH;
+        public PCars2Timings ReadTimings(Stream stream, BinaryReader binaryReader, PC2RawPacketMeta baseUDP) {
+            stream.Position = PC2RawPacketMeta.PACKET_LENGTH;
             var timings = new PCars2Timings();
             timings.baseUDP = baseUDP;
             timings.numberParticipants = binaryReader.ReadSByte();
@@ -242,8 +242,8 @@ namespace PcarsUDP {
             return timings;
         }
 
-        public PCars2TimeStatsData ReadTimeStats(Stream stream, BinaryReader binaryReader, PCars2BaseUDP baseUDP) {
-            stream.Position = PCars2BaseUDP.PACKET_LENGTH;
+        public PCars2TimeStatsData ReadTimeStats(Stream stream, BinaryReader binaryReader, PC2RawPacketMeta baseUDP) {
+            stream.Position = PC2RawPacketMeta.PACKET_LENGTH;
             var timeStatsData = new PCars2TimeStatsData();
             timeStatsData.baseUDP = baseUDP;
             timeStatsData.participantChangedTimestamp = binaryReader.ReadUInt32();

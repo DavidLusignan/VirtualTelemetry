@@ -9,10 +9,10 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace CoreService {
-    public class PC2LapTimeHandler {
+    public class PC2StdLapTimeConvertor {
         private object _stateLock = new object();
         public CollectionStore<ParticipantLapTimesDTO> lapTimes { get; private set; }
-        public PC2LapTimeHandler(IObservable<DataState> packetHandler, LiteDatabase db) {
+        public PC2StdLapTimeConvertor(IObservable<DataState> packetHandler, LiteDatabase db) {
             lapTimes = new CollectionStore<ParticipantLapTimesDTO>(db);
             packetHandler.Subscribe(new Observer<DataState>(OnState));
         }

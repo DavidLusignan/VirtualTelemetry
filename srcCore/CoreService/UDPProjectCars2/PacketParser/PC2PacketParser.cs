@@ -11,18 +11,18 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace CoreService.ProjectCars2 {
-    public class PC2PacketHandler : IObservable<DataState>{
+    public class PC2PacketParser : IObservable<DataState>{
         const int DEFAULT_PORT = 5606;
         private List<IObserver<DataState>> observers;
         UdpClient udpClient;
         IPEndPoint ipEndPoint;
-        PCars2_UDP pcars2Udp;
+        PC2RawHandler pcars2Udp;
         bool keepRunning;
-        public PC2PacketHandler(int listeningPort = DEFAULT_PORT) {
+        public PC2PacketParser(int listeningPort = DEFAULT_PORT) {
             observers = new List<IObserver<DataState>>();
             udpClient = new UdpClient(listeningPort);
             ipEndPoint = new IPEndPoint(IPAddress.Any, listeningPort);
-            pcars2Udp = new PCars2_UDP(udpClient, ipEndPoint);
+            pcars2Udp = new PC2RawHandler(udpClient, ipEndPoint);
         }
 
         public void Start() {
@@ -40,11 +40,11 @@ namespace CoreService.ProjectCars2 {
                 Task.Run(() => {
                     if (packet != null) {
                         switch (packet.baseUDP.packetType) {
-                            case PCars2_UDP.PacketType.Telemetry:
+                            case PC2RawHandler.PacketType.Telemetry:
                                 var telemetry = (PCars2TelemetryData)packet;
                                 NotifyAll(new ViewedParticipantIndexState(telemetry.viewedParticipantIndex));
                                 break;
-                            case PCars2_UDP.PacketType.Timings:
+                            case PC2RawHandler.PacketType.Timings:
                                 var timings = (PCars2Timings)packet;
                                 timings.participants.ForEach(p => { 
                                     var state = new CurrentTimeState(p.currentTime, p.currentLap,
@@ -52,7 +52,7 @@ namespace CoreService.ProjectCars2 {
                                     NotifyAll(state);
                                 });
                                 break;
-                            case PCars2_UDP.PacketType.TimeStats:
+                            case PC2RawHandler.PacketType.TimeStats:
                                 var timeStats = (PCars2TimeStatsData)packet;
                                 timeStats.participantStats.ForEach(p => {
                                     var state = new TimeState(p.lastLapTime, p.lastSectorTime, p.participantIndex);
