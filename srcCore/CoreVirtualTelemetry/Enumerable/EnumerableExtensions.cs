@@ -8,7 +8,7 @@ namespace Global.Enumerable {
             return dic.ToList().ToDictionary(kv => kv.Key, kv => kv.Value);
         }
 
-        public static IDictionary<K, V> ToDictionary<K, V>(this IEnumerable<KeyValuePair<K, V>> source) {
+        public static Dictionary<K, V> ToDictionary<K, V>(this IEnumerable<KeyValuePair<K, V>> source) {
             return source.ToDictionary(kv => kv.Key, kv => kv.Value);
         }
 
@@ -23,7 +23,7 @@ namespace Global.Enumerable {
             return source.Where(kv => !kv.Key.Equals(key)).ToDictionary();
         }
 
-        public static IDictionary<K, V> Concat<K, V>(this IDictionary<K, V> source, K key, V value) {
+        public static Dictionary<K, V> Concat<K, V>(this IDictionary<K, V> source, K key, V value) {
             return source.Concat(new[] { new KeyValuePair<K, V>(key, value) }).ToDictionary();
         }
 

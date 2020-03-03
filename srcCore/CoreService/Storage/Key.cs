@@ -6,7 +6,7 @@ namespace CoreService.Storage {
     public class Key {
         private ObjectId id;
 
-        private Key(ObjectId id) {
+        internal Key(ObjectId id) {
             this.id = id;
         }
 
