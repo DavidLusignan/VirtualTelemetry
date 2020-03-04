@@ -1,4 +1,4 @@
-﻿namespace CoreService.ProjectCars2 {
+﻿namespace CoreService.UDPProjectCars2.PacketParser {
     public struct PCars2ParticipantStatsInfo {
         public int participantIndex;
         public float fastestLapTime;

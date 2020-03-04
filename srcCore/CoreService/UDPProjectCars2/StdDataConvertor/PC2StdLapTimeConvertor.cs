@@ -1,6 +1,7 @@
 ﻿using CoreService.Data;
 using CoreService.Storage;
 using CoreService.Storage.DTOs;
+using CoreService.UDPProjectCars2.PacketParser;
 using Global.Enumerable;
 using Global.Observable;
 using LiteDB;
@@ -12,24 +13,26 @@ namespace CoreService {
     public class PC2StdLapTimeConvertor {
         private object _stateLock = new object();
         public CollectionStore<ParticipantLapTimesDTO> lapTimes { get; private set; }
-        public PC2StdLapTimeConvertor(IObservable<DataState> packetHandler, LiteDatabase db) {
+        public PC2StdLapTimeConvertor(IObservable<PC2BasePacket> packetHandler, LiteDatabase db) {
             lapTimes = new CollectionStore<ParticipantLapTimesDTO>(db);
-            packetHandler.Subscribe(new Observer<DataState>(OnState));
+            packetHandler.Subscribe(new Observer<PC2BasePacket>(OnState));
         }
 
-        private void OnState(DataState newState) {
+        private void OnState(PC2BasePacket newState) {
             lock(_stateLock) {
                 try {
-                    if (newState.dataType.Equals(DataStateType.Time)) {
-                        var time = (TimeState)newState;
-                        ParticipantLapTimes current;
-                        if (lapTimes.ExistsWhere(l => l.participantIndex.Equals(time.participantIndex))) {
-                            current = lapTimes.FindWhere(l => l.participantIndex.Equals(time.participantIndex)).Entity();
-                        } else {
-                            current = new ParticipantLapTimes(Key.Create(), time.participantIndex, new Dictionary<int, ParticipantLapTime>());
-                        }
-                        var updated = current.InsertIfNewTime(time);
-                        lapTimes.Update(current.DTO());
+                    if (newState.baseUDP.packetType.Equals(PC2PacketType.TimeStats)) {
+                        var time = (PCars2TimeStatsData)newState;
+                        time.participantStats.ForEach(participant => {
+                            ParticipantLapTimes current;
+                            if (lapTimes.ExistsWhere(l => l.participantIndex.Equals(participant.participantIndex))) {
+                                current = lapTimes.FindWhere(l => l.participantIndex.Equals(participant.participantIndex)).Entity();
+                            } else {
+                                current = new ParticipantLapTimes(Key.Create(), participant.participantIndex, new Dictionary<int, ParticipantLapTime>());
+                            }
+                            var updated = current.InsertIfNewTime(participant);
+                            lapTimes.Update(current.DTO());
+                        });
                     }
                 } catch (Exception e) {
                     Console.WriteLine("Error while updating lap times");

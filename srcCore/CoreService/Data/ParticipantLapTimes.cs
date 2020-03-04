@@ -1,6 +1,7 @@
 ﻿using CoreService.Data;
 using CoreService.Storage;
 using CoreService.Storage.DTOs;
+using CoreService.UDPProjectCars2.PacketParser;
 using Global.Enumerable;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace CoreService {
             this.lapTimes = lapTimes;
         }
 
-        public ParticipantLapTimes InsertIfNewTime(TimeState time) {
+        public ParticipantLapTimes InsertIfNewTime(PCars2ParticipantStatsInfo time) {
             if (IsOutLap(time)) {
                 return this;
             }
@@ -51,7 +52,7 @@ namespace CoreService {
             return lapTimes[lapTimes.Keys.Max()];
         }
 
-        private bool IsOutLap(TimeState time) {
+        private bool IsOutLap(PCars2ParticipantStatsInfo time) {
             return time.lastSectorTime < 0;
         }
 
@@ -59,17 +60,17 @@ namespace CoreService {
             return !lapTimes.Any();
         }
 
-        private bool IsNewSector1(TimeState time) {
+        private bool IsNewSector1(PCars2ParticipantStatsInfo time) {
             return lapTimes[lapTimes.Keys.Max()].IsComplete && lapTimes[lapTimes.Keys.Max()].sector3Time != time.lastSectorTime;
         }
 
-        private bool IsNewSector2(TimeState time) {
+        private bool IsNewSector2(PCars2ParticipantStatsInfo time) {
             return lapTimes[lapTimes.Keys.Max()].sector1Time > 0 && 
                 lapTimes[lapTimes.Keys.Max()].sector2Time <= 0 && 
                 lapTimes[lapTimes.Keys.Max()].sector1Time != time.lastSectorTime;
         }
 
-        private bool IsNewSector3(TimeState time) {
+        private bool IsNewSector3(PCars2ParticipantStatsInfo time) {
             return lapTimes[lapTimes.Keys.Max()].sector2Time > 0 && 
                 lapTimes[lapTimes.Keys.Max()].sector3Time <= 0 && 
                 lapTimes[lapTimes.Keys.Max()].sector2Time != time.lastSectorTime;

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
-namespace CoreService.ProjectCars2 {
-    public class PCars2Timings : PC2RawPacket {
+namespace CoreService.UDPProjectCars2.PacketParser {
+    public class PCars2Timings : PC2BasePacket {
         public const int MAX_PARTICIPANTS = 32;
         public sbyte numberParticipants;
         public uint participantsChangedTimestamp;

@@ -1,5 +1,5 @@
-﻿namespace CoreService.ProjectCars2 {
-    public class PCars2TelemetryData : PC2RawPacket {
+﻿namespace CoreService.UDPProjectCars2.PacketParser {
+    public class PCars2TelemetryData : PC2BasePacket {
         public sbyte viewedParticipantIndex;
         public byte unfilteredThrottle;
         public byte unfilteredBrake;
