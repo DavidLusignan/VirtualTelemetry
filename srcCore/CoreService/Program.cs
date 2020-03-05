@@ -13,8 +13,7 @@ using System.Net.Sockets;
 
 namespace CoreService {
     class Program {
-        const int DEFAULT_PORT = 5606;
-        static int currentLap = -1;
+        const int DEFAULT_PORT = 5606;  
         static IDictionary<int, float> lapTimes = new Dictionary<int, float>();
         static void Main(string[] args) {
             DTOBsonConversion.Setup();
