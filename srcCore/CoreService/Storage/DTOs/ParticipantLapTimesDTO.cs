@@ -48,14 +48,19 @@ namespace CoreService.Storage.DTOs {
         }
 
         public static ParticipantLapTimesDTO BsonToParticipantLapTimesDTO(BsonValue bson) {
-            var lapTimes = bson["lapTimes"].AsArray.Select(lapTimeBson => {
-                var lapNumber = lapTimeBson["lapNumber"].AsInt32;
-                var lapTime = lapTimeBson["lapTime"].AsDouble;
-                var sector1Time = lapTimeBson["sector1Time"].AsDouble;
-                var sector2Time = lapTimeBson["sector2Time"].AsDouble;
-                var sector3Time = lapTimeBson["sector3Time"].AsDouble;
-                return new KeyValuePair<int, ParticipantLapTime>(lapNumber, new ParticipantLapTime(lapTime, sector1Time, sector2Time, sector3Time));
-            }).ToDictionary();
+            IDictionary<int, ParticipantLapTime> lapTimes;
+            if (!bson["lapTimes"].IsNull) {
+                lapTimes = bson["lapTimes"].AsArray.Select(lapTimeBson => {
+                    var lapNumber = lapTimeBson["lapNumber"].AsInt32;
+                    var lapTime = lapTimeBson["lapTime"].AsDouble;
+                    var sector1Time = lapTimeBson["sector1Time"].AsDouble;
+                    var sector2Time = lapTimeBson["sector2Time"].AsDouble;
+                    var sector3Time = lapTimeBson["sector3Time"].AsDouble;
+                    return new KeyValuePair<int, ParticipantLapTime>(lapNumber, new ParticipantLapTime(lapTime, sector1Time, sector2Time, sector3Time));
+                }).ToDictionary();
+            } else {
+                lapTimes = new Dictionary<int, ParticipantLapTime>();
+            }
             var participantIndex = bson["participantIndex"].AsInt32;
             var id = bson["_id"].AsObjectId;
             return new ParticipantLapTimesDTO(new Key(id), participantIndex, lapTimes);
