@@ -45,5 +45,11 @@ namespace CoreService.UDPProjectCars2.RawPacketHandler {
             }
             return new Unsubscriber<PC2RawPacket>(_observers, observer);
         }
+
+        public static PC2RawHandler Create(int port) {
+            var udpClient = new UdpClient(port);
+            var ipEndPoint = new IPEndPoint(IPAddress.Any, port);
+            return new PC2RawHandler(udpClient, ipEndPoint);
+        }
     }
 }

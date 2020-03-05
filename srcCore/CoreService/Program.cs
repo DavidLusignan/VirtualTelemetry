@@ -18,9 +18,7 @@ namespace CoreService {
         static void Main(string[] args) {
             DTOBsonConversion.Setup();
             var cache = new LiveDataCache();
-            var udpClient = new UdpClient(DEFAULT_PORT);
-            var ipEndPoint = new IPEndPoint(IPAddress.Any, DEFAULT_PORT);
-            var rawHandler = new PC2RawHandler(udpClient, ipEndPoint);
+            var rawHandler = PC2RawHandler.Create(DEFAULT_PORT);
             var packetParser = new PC2PacketParser(rawHandler);
             var db = new LiteDatabase("storage.db");
             var lapTimeCache = new PC2StdLapTimeConvertor(packetParser, db);
