@@ -10,10 +10,12 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace CoreService {
-    public class PC2StdLapTimeConvertor {
+    public class PC2StdLapTimeConvertor : IObservable<ParticipantLapTimes> {
         private object _stateLock = new object();
+        private List<IObserver<ParticipantLapTimes>> observers;
         public CollectionStore<ParticipantLapTimesDTO> lapTimes { get; private set; }
         public PC2StdLapTimeConvertor(IObservable<PC2BasePacket> packetHandler, LiteDatabase db) {
+            observers = new List<IObserver<ParticipantLapTimes>>();
             lapTimes = new CollectionStore<ParticipantLapTimesDTO>(db);
             packetHandler.Subscribe(new Observer<PC2BasePacket>(OnState));
         }
@@ -32,13 +34,24 @@ namespace CoreService {
                             }
                             var updated = current.InsertIfNewTime(participant);
                             lapTimes.Update(current.DTO());
+                            NotifyAll(updated);
                         });
                     }
                 } catch (Exception e) {
-                    Console.WriteLine("Error while updating lap times");
-                    Console.WriteLine(e.Message);
+                    
                 }
             }
+        }
+        
+        private void NotifyAll(ParticipantLapTimes lapTimes) {
+            observers.ForEach(o => o.OnNext(lapTimes));
+        }
+
+        public IDisposable Subscribe(IObserver<ParticipantLapTimes> observer) {
+            if (!observers.Contains(observer)) {
+                observers.Add(observer);
+            }
+            return new Unsubscriber<ParticipantLapTimes>(observers, observer);
         }
     }
 }
