@@ -1,14 +1,7 @@
-﻿using CoreService.Data;
-using CoreService.UDPProjectCars2.RawPacketHandler;
-using Global.Enumerable;
+﻿using CoreService.UDPProjectCars2.RawPacketHandler;
 using Global.Observable;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CoreService.UDPProjectCars2.PacketParser {
     public class PC2PacketParser : IObservable<PC2BasePacket> {

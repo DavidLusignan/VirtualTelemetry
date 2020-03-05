@@ -6,10 +6,6 @@ using Global.Enumerable;
 using Global.Observable;
 using LiteDB;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
 
 namespace CoreService {
     class Program {

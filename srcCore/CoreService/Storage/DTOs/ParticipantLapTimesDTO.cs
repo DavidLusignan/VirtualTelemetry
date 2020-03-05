@@ -1,9 +1,7 @@
 ﻿using Global.Enumerable;
 using LiteDB;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace CoreService.Storage.DTOs {
     public interface IStorable {
