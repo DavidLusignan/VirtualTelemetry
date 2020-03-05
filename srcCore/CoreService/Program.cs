@@ -14,10 +14,8 @@ using System.Net.Sockets;
 namespace CoreService {
     class Program {
         const int DEFAULT_PORT = 5606;  
-        static IDictionary<int, float> lapTimes = new Dictionary<int, float>();
         static void Main(string[] args) {
             DTOBsonConversion.Setup();
-            var cache = new LiveDataCache();
             var rawHandler = PC2RawHandler.Create(DEFAULT_PORT);
             var packetParser = new PC2PacketParser(rawHandler);
             var db = new LiteDatabase("storage.db");
