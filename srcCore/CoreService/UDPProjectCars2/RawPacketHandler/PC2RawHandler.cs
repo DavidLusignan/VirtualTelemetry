@@ -14,6 +14,7 @@ namespace CoreService.UDPProjectCars2.RawPacketHandler {
         private IPEndPoint _groupEP;
 
         public PC2RawHandler(UdpClient listener, IPEndPoint groupEp) {
+            _observers = new List<IObserver<PC2RawPacket>>();
             _listener = listener;
             _groupEP = groupEp;
         }
@@ -22,7 +23,11 @@ namespace CoreService.UDPProjectCars2.RawPacketHandler {
             _keepRunning = true;
             Task.Run(() => {
                 while(_keepRunning) {
-                    HandlePacket();
+                    try {
+                        HandlePacket();
+                    } catch {
+                        
+                    }
                 }
             });
         }
