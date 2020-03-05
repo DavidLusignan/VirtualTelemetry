@@ -13,12 +13,12 @@ using System.Threading.Tasks;
 namespace CoreService.UDPProjectCars2.PacketParser {
     public class PC2PacketParser : IObservable<PC2BasePacket> {
         private List<IObserver<PC2BasePacket>> observers;
-        PC2RawHandler pcars2Udp;
+        IObservable<PC2RawPacket> rawPacketObs;
         PC2PacketFactory packetFactory = new PC2PacketFactory(8);
-        public PC2PacketParser(PC2RawHandler rawHandler) {
+        public PC2PacketParser(IObservable<PC2RawPacket> rawHandler) {
             observers = new List<IObserver<PC2BasePacket>>();
-            pcars2Udp = rawHandler;
-            pcars2Udp.Subscribe(new Observer<PC2RawPacket>(HandlePacket));
+            rawPacketObs = rawHandler;
+            rawPacketObs.Subscribe(new Observer<PC2RawPacket>(HandlePacket));
         }
 
         private void HandlePacket(PC2RawPacket rawPacket) {
