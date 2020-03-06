@@ -15,7 +15,7 @@ namespace CoreService {
             var rawHandler = PC2RawHandler.Create(DEFAULT_PORT);
             var packetParser = new PC2PacketParser(rawHandler);
             var db = new LiteDatabase("storage.db");
-            var lapTimeCache = new PC2StdLapTimeConvertor(packetParser, db);
+            var lapTimeCache = new PC2StdLapTimePipeline(packetParser, db);
             lapTimeCache.Subscribe(new Observer<ParticipantLapTimes>(lp => {
                 if (lp.participantIndex == 0) {
                     Console.Clear();
