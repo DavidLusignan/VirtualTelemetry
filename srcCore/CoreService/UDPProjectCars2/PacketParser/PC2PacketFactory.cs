@@ -1,11 +1,7 @@
-﻿using CoreService.UDPProjectCars2.RawPacketHandler;
 ﻿using CoreService.UDPProjectCars2.PacketParser.Data;
 using CoreService.UDPProjectCars2.RawPacketHandler;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace CoreService.UDPProjectCars2.PacketParser {
     public class PC2PacketFactory {
@@ -32,9 +28,10 @@ namespace CoreService.UDPProjectCars2.PacketParser {
                     return ReadTimings(rawPacket, meta);
                 case PC2PacketType.TimeStats:
                     return ReadTimeStats(rawPacket, meta);
+                case PC2PacketType.GameState:
+                    return PC2GameStatePacket.Create(rawPacket, meta);
                 case PC2PacketType.RaceDefinition:
                 case PC2PacketType.Participants:
-                case PC2PacketType.GameState:
                 case PC2PacketType.WeatherState:
                 case PC2PacketType.VehicleNames:
                 case PC2PacketType.ParticipantVehicleNames:
