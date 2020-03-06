@@ -23,14 +23,21 @@ namespace CoreService.UDPProjectCars2.PacketParser {
 
         public PC2BasePacket CreateVersion8(PC2RawPacket rawPacket) {
             var meta = ReadMetaUDP(rawPacket);
-            if (meta.packetType == PC2PacketType.Telemetry) {
-                return ReadTelemetryData(rawPacket, meta);
-            } else if (meta.packetType == PC2PacketType.Timings) {
-                return ReadTimings(rawPacket, meta);
-            } else if (meta.packetType == PC2PacketType.TimeStats) {
-                return ReadTimeStats(rawPacket, meta);
-            } else {
-                throw new NotImplementedException("Project Cars 2 packet type not handled: " + meta.packetType);
+            switch (meta.packetType) {
+                case PC2PacketType.Telemetry:
+                    return ReadTelemetryData(rawPacket, meta);
+                case PC2PacketType.Timings:
+                    return ReadTimings(rawPacket, meta);
+                case PC2PacketType.TimeStats:
+                    return ReadTimeStats(rawPacket, meta);
+                case PC2PacketType.RaceDefinition:
+                case PC2PacketType.Participants:
+                case PC2PacketType.GameState:
+                case PC2PacketType.WeatherState:
+                case PC2PacketType.VehicleNames:
+                case PC2PacketType.ParticipantVehicleNames:
+                default:
+                    throw new NotImplementedException("Project Cars 2 packet type not handled: " + meta.packetType);
             }
         }
 
