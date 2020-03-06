@@ -1,4 +1,6 @@
 ﻿using CoreService.UDPProjectCars2.RawPacketHandler;
+﻿using CoreService.UDPProjectCars2.PacketParser.Data;
+using CoreService.UDPProjectCars2.RawPacketHandler;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -231,7 +233,7 @@ namespace CoreService.UDPProjectCars2.PacketParser {
                 participant.highestFlag = rawPacket.Data.ReadByte();
                 participant.pitModeSchedule = rawPacket.Data.ReadByte();
                 participant.carIndex = rawPacket.Data.ReadUInt16();
-                participant.raceState = rawPacket.Data.ReadByte();
+                participant.raceState = (PC2RaceState)rawPacket.Data.ReadByte();
                 participant.currentLap = rawPacket.Data.ReadByte();
                 participant.currentTime = rawPacket.Data.ReadSingle();
                 participant.currentSectorTime = rawPacket.Data.ReadSingle();

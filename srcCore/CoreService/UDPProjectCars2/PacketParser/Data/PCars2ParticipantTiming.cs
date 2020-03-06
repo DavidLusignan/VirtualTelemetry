@@ -14,9 +14,19 @@
         public byte highestFlag;
         public byte pitModeSchedule;
         public ushort carIndex;
-        public byte raceState;
+        public PC2RaceState raceState;
         public byte currentLap;
         public float currentTime;
         public float currentSectorTime;
+    }
+
+    public enum PC2RaceState {
+        Invalid,
+        NotStarted,
+        Racing,
+        Finished,
+        Disqualified,
+        Retired,
+        DNF
     }
 }
