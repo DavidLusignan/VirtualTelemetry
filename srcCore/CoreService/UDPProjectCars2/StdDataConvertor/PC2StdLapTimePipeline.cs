@@ -12,10 +12,10 @@ namespace CoreService {
     public class PC2StdLapTimePipeline : IObservable<ParticipantLapTimes> {
         private object _stateLock = new object();
         private List<IObserver<ParticipantLapTimes>> observers;
-        public CollectionStore<ParticipantLapTimesDTO> lapTimes { get; private set; }
-        public PC2StdLapTimePipeline(IObservable<PC2BasePacket> packetHandler, LiteDatabase db) {
+        private ParticipantLapTimesStore _lapTimesStore { get; }
+        public PC2StdLapTimePipeline(IObservable<PC2BasePacket> packetHandler, ParticipantLapTimesStore lapTimesStore) {
             observers = new List<IObserver<ParticipantLapTimes>>();
-            lapTimes = new CollectionStore<ParticipantLapTimesDTO>(db);
+            _lapTimesStore = lapTimesStore;
             packetHandler.Subscribe(new Observer<PC2BasePacket>(OnState));
         }
 
@@ -26,13 +26,12 @@ namespace CoreService {
                         var time = (PCars2TimeStatsData)newState;
                         time.participantStats.ForEach(participant => {
                             ParticipantLapTimes current;
-                            if (lapTimes.ExistsWhere(l => l.participantIndex.Equals(participant.participantIndex))) {
-                                current = lapTimes.FindWhere(l => l.participantIndex.Equals(participant.participantIndex)).Entity();
+                            if (_lapTimesStore.ExistsWhere(l => l.participantIndex.Equals(participant.participantIndex))) {
+                                current = _lapTimesStore.FindWhere(l => l.participantIndex.Equals(participant.participantIndex));
                             } else {
                                 current = new ParticipantLapTimes(Key.Create(), participant.participantIndex, new Dictionary<int, ParticipantLapTime>());
                             }
                             var updated = PC2StdLapTimeFactory.InsertIfNewTime(participant, current);
-                            lapTimes.Update(current.DTO());
                             NotifyAll(updated);
                         });
                     }
@@ -62,21 +61,21 @@ namespace CoreService {
             else if (IsFirstSector(currentTimes)) {
                 var toInsert = new ParticipantLapTime(-1, newTime.lastSectorTime, -1, -1);
                 var newLapTimes = currentTimes.lapTimes.Concat(0, toInsert);
-                return new ParticipantLapTimes(currentTimes.key, currentTimes.participantIndex, newLapTimes);
+                return new ParticipantLapTimes(currentTimes.Id, currentTimes.participantIndex, newLapTimes);
             }
             else if (IsNewSector1(newTime, currentTimes)) {
                 var toInsert = new ParticipantLapTime(-1, newTime.lastSectorTime, -1, -1);
                 var newLapTimes = currentTimes.lapTimes.Concat(currentTimes.lapTimes.Keys.Max() + 1, toInsert);
-                return new ParticipantLapTimes(currentTimes.key, currentTimes.participantIndex, newLapTimes);
+                return new ParticipantLapTimes(currentTimes.Id, currentTimes.participantIndex, newLapTimes);
             }
             else if (IsNewSector2(newTime, currentTimes)) {
                 var toUpdate = new ParticipantLapTime(-1, CurrentLap(currentTimes).sector1Time, newTime.lastSectorTime, -1);
                 var newLapTimes = currentTimes.lapTimes.Except(currentTimes.lapTimes.Keys.Max()).Concat(currentTimes.lapTimes.Keys.Max(), toUpdate);
-                return new ParticipantLapTimes(currentTimes.key, currentTimes.participantIndex, newLapTimes);
+                return new ParticipantLapTimes(currentTimes.Id, currentTimes.participantIndex, newLapTimes);
             } else if (IsNewSector3(newTime, currentTimes)) {
                 var toUpdate = new ParticipantLapTime(newTime.lastLapTime, CurrentLap(currentTimes).sector1Time, CurrentLap(currentTimes).sector2Time, newTime.lastSectorTime);
                 var newLapTimes = currentTimes.lapTimes.Except(currentTimes.lapTimes.Keys.Max()).Concat(currentTimes.lapTimes.Keys.Max(), toUpdate);
-                return new ParticipantLapTimes(currentTimes.key, currentTimes.participantIndex, newLapTimes);
+                return new ParticipantLapTimes(currentTimes.Id, currentTimes.participantIndex, newLapTimes);
             } else {
                 return currentTimes;
             }
