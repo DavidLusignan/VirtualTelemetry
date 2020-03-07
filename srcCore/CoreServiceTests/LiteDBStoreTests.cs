@@ -25,9 +25,9 @@ namespace CoreServiceTests {
                     1, new ParticipantLapTime(0.123, 0.456, 0.789, 1)
                 }
             };
-            var lapTimes = new ParticipantLapTimesDTO(Key.Create(), 0, lapTimeDic);
+            var lapTimes = new ParticipantLapTimes(Key.Create(), 0, lapTimeDic);
             var db = new LiteDatabase("test.db");
-            var store = new CollectionStore<ParticipantLapTimesDTO>(db);
+            var store = new CollectionStore<ParticipantLapTimes>(db);
             store.DeleteAll();
             store.Store(lapTimes);
             var result = store.LoadAll().First();

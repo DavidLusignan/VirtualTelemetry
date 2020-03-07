@@ -32,7 +32,7 @@ namespace CoreService.Storage {
 
         public void DeleteAll() {
             var all = _collection.FindAll();
-            all.ForEach(doc => _collection.Delete(doc.Id));
+            all.ForEach(doc => _collection.Delete(doc.Id.AsLiteDB()));
         }
 
         public IEnumerable<T> LoadAll() {
@@ -52,11 +52,11 @@ namespace CoreService.Storage {
         }
 
         public void Store(T item) {
-            _collection.Insert(item.Id, item);
+            _collection.Insert(item.Id.AsLiteDB(), item);
         }
 
         public void Update(T item) {
-            _collection.Upsert(item.Id, item);
+            _collection.Upsert(item.Id.AsLiteDB(), item);
         }
     }
 }
