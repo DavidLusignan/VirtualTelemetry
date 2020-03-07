@@ -15,7 +15,7 @@ namespace CoreService.Storage {
 
         private void OnState(ParticipantLapTimes lapTimes) {
             lock(_stateLock) {
-                Store(lapTimes);
+                Upsert(lapTimes);
             }
         }
     }

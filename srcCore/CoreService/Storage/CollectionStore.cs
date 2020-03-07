@@ -13,7 +13,7 @@ namespace CoreService.Storage {
         bool ExistsWhere(Func<T, bool> predicate);
         IEnumerable<T> LoadAll();
         void Store(T item);
-        void Update(T item);
+        void Upsert(T item);
         void Delete(Key key);
         void DeleteAll();
     }
@@ -55,7 +55,7 @@ namespace CoreService.Storage {
             _collection.Insert(item.Id.AsLiteDB(), item);
         }
 
-        public void Update(T item) {
+        public void Upsert(T item) {
             _collection.Upsert(item.Id.AsLiteDB(), item);
         }
     }
