@@ -1,7 +1,9 @@
-﻿using CoreService.F12018;
+﻿using CoreService.Data;
+using CoreService.F12018;
 using CoreService.Storage.DTOs;
 using CoreService.UDPProjectCars2.PacketParser;
 using CoreService.UDPProjectCars2.RawPacketHandler;
+using CoreService.UDPProjectCars2.StdDataConvertor;
 using Global.Enumerable;
 using Global.Observable;
 using LiteDB;
@@ -15,14 +17,9 @@ namespace CoreService {
             var rawHandler = PC2RawHandler.Create(DEFAULT_PORT);
             var packetParser = new PC2PacketParser(rawHandler);
             var db = new LiteDatabase("storage.db");
-            var lapTimeCache = new PC2StdLapTimePipeline(packetParser, db);
-            lapTimeCache.Subscribe(new Observer<ParticipantLapTimes>(lp => {
-                if (lp.participantIndex == 0) {
-                    Console.Clear();
-                    lp.lapTimes.ForEach(lapTime => {
-                        Console.WriteLine("Lap " + lapTime.Key + "; Total : " + lapTime.Value.lapTime + "; S1: " + lapTime.Value.sector1Time + "; S2: " + lapTime.Value.sector2Time + "; S3: " + lapTime.Value.sector3Time);
-                    });
-                }
+            var test = new PC2SessionIDPipeline(0, packetParser);
+            test.Subscribe(new Observer<SessionState>(session => {
+                Console.WriteLine(session);
             }));
             rawHandler.Start();
             while(true){
