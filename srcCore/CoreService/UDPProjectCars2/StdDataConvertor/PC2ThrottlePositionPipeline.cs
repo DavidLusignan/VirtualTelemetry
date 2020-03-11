@@ -17,7 +17,9 @@ namespace CoreService.UDPProjectCars2.StdDataConvertor {
                 if (packet.baseUDP.packetType.Equals(PC2PacketType.Telemetry)) {
                     lock(_stateLock) {
                         var telemetry = (PCars2TelemetryData)packet;
-                        NotifyAll(new ThrottlePosition(telemetry.throttle));
+                        var doubleThrottle = (double)telemetry.throttle;
+                        var adjustedThrottle = doubleThrottle / 255d * 100d;
+                        NotifyAll(ThrottlePosition.Create(adjustedThrottle));
                     }
                 }
             } catch {
@@ -34,18 +36,6 @@ namespace CoreService.UDPProjectCars2.StdDataConvertor {
                 observers.Add(observer);
             }
             return new Unsubscriber<ThrottlePosition>(observers, observer);
-        }
-    }
-
-    public class ThrottlePosition {
-        public double Min = 0d;
-        public double Max = 100d;
-        public double Value { get; }
-        public ThrottlePosition(double value) {
-            if (value < Min || value > Max) {
-                throw new ArgumentException("Throttle position was not between min and max values");
-            }
-            Value = value;
         }
     }
 }
