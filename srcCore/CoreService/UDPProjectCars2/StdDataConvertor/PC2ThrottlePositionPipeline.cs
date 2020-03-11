@@ -19,7 +19,7 @@ namespace CoreService.UDPProjectCars2.StdDataConvertor {
                         var telemetry = (PCars2TelemetryData)packet;
                         var doubleThrottle = (double)telemetry.throttle;
                         var adjustedThrottle = doubleThrottle / 255d * 100d;
-                        NotifyAll(ThrottlePosition.Create(adjustedThrottle));
+                        NotifyAll(new ThrottlePosition(adjustedThrottle, telemetry.baseUDP.timeStamp));
                     }
                 }
             } catch {

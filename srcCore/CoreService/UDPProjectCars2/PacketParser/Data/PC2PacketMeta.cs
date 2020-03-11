@@ -1,4 +1,5 @@
 ﻿using CoreService.UDPProjectCars2.RawPacketHandler;
+using System;
 
 namespace CoreService.UDPProjectCars2.PacketParser {
     public sealed class PC2PacketMeta {
@@ -9,8 +10,9 @@ namespace CoreService.UDPProjectCars2.PacketParser {
         public byte partialPacketNumber;
         public PC2PacketType packetType;
         public byte packetVersion;
+        public DateTime timeStamp;
 
-        public PC2PacketMeta(uint packetNumber, uint categoryPacketNumber, byte partialPacketIndex, byte partialPacketNumber, byte packetType, byte packetVersion) {
+        public PC2PacketMeta(uint packetNumber, uint categoryPacketNumber, byte partialPacketIndex, byte partialPacketNumber, byte packetType, byte packetVersion, DateTime timeStamp) {
             this.packetNumber = packetNumber;
             this.categoryPacketNumber = categoryPacketNumber;
             this.partialPacketIndex = partialPacketIndex;
@@ -27,7 +29,7 @@ namespace CoreService.UDPProjectCars2.PacketParser {
             var packetType = rawPacket.Data.ReadByte();
             var packetVersion = rawPacket.Data.ReadByte();
 
-            return new PC2PacketMeta(packetNumber, categoryPacketNumber, partialPacketIndex, partialPacketNumber, packetType, packetVersion);
+            return new PC2PacketMeta(packetNumber, categoryPacketNumber, partialPacketIndex, partialPacketNumber, packetType, packetVersion, rawPacket.TimeStamp);
         }
     }
 }

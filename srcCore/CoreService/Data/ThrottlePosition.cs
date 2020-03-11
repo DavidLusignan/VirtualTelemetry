@@ -6,15 +6,12 @@ namespace CoreService.UDPProjectCars2.StdDataConvertor {
         public double Max = 100d;
         public double Value { get; }
         public DateTime Time { get; }
-        private ThrottlePosition(double value, DateTime time) {
+        public ThrottlePosition(double value, DateTime time) {
             if (value < Min || value > Max) {
                 throw new ArgumentException("Throttle position was not between min and max values");
             }
             Value = value;
             Time = time;
-        }
-        public static ThrottlePosition Create(double value) {
-            return new ThrottlePosition(value, DateTime.UtcNow);
         }
     }
 }
