@@ -46,7 +46,7 @@ namespace CoreService.UDPProjectCars2.StdDataConvertor {
         private void UpdateIfChanged(SessionProgress sessionProgress) {
             lock(_stateLock) {
                 if (!_currentState.SessionProgress.Equals(sessionProgress)) {
-                    _currentState = new SessionState(_currentState.SessionID, _currentState.SessionType, sessionProgress);
+                    _currentState = new SessionState(_currentState.Id, _currentState.SessionType, sessionProgress);
                     NotifyAll(_currentState);
                 }
             }

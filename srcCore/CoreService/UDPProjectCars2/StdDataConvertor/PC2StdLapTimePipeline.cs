@@ -1,6 +1,7 @@
 ﻿using CoreService.Data;
 using CoreService.Storage;
 using CoreService.Storage.DTOs;
+using CoreService.Storage.SpecificStores;
 using CoreService.UDPProjectCars2.PacketParser;
 using Global.Enumerable;
 using Global.Observable;
@@ -29,10 +30,10 @@ namespace CoreService {
                         var time = (PCars2TimeStatsData)newState;
                         time.participantStats.ForEach(participant => {
                             ParticipantLapTimes current;
-                            if (_lapTimesStore.ExistsWhere(l => l.participantIndex.Equals(participant.participantIndex) && l.SessionId.Equals(_currentSession.SessionID))) {
-                                current = _lapTimesStore.FindWhere(l => l.participantIndex.Equals(participant.participantIndex) && l.SessionId.Equals(_currentSession.SessionID));
+                            if (_lapTimesStore.ExistsWhere(l => l.participantIndex.Equals(participant.participantIndex) && l.SessionId.Equals(_currentSession.Id))) {
+                                current = _lapTimesStore.FindWhere(l => l.participantIndex.Equals(participant.participantIndex) && l.SessionId.Equals(_currentSession.Id));
                             } else {
-                                current = new ParticipantLapTimes(Key.Create(), _currentSession.SessionID, _currentSession.SessionType, participant.participantIndex, new Dictionary<int, ParticipantLapTime>());
+                                current = new ParticipantLapTimes(Key.Create(), _currentSession.Id, _currentSession.SessionType, participant.participantIndex, new Dictionary<int, ParticipantLapTime>());
                             }
                             var updated = PC2StdLapTimeFactory.InsertIfNewTime(participant, current);
                             NotifyAll(updated);

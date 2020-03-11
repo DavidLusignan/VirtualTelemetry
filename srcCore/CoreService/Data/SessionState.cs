@@ -1,18 +1,19 @@
 ﻿using CoreService.Storage;
+using CoreService.Storage.DTOs;
 
 namespace CoreService.Data {
-    public class SessionState {
-        public Key SessionID { get; }
+    public class SessionState : IStorable {
+        public Key Id { get; }
         public SessionType SessionType { get; }
         public SessionProgress SessionProgress { get; }
-        public SessionState(Key sessionID, SessionType sessionType, SessionProgress sessionProgress) {
-            SessionID = sessionID;
+        public SessionState(Key id, SessionType sessionType, SessionProgress sessionProgress) {
+            Id = id;
             SessionType = sessionType;
             SessionProgress = sessionProgress;
         }
 
         public override string ToString() {
-            return "SessionID: " + SessionID.ToString() + "; SessionType: " + SessionType + "; SessionProgress: " + SessionProgress;
+            return "SessionID: " + Id.ToString() + "; SessionType: " + SessionType + "; SessionProgress: " + SessionProgress;
         }
     }
 
