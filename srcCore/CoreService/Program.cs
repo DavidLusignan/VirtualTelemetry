@@ -25,7 +25,7 @@ namespace CoreService {
             var throttlePipeline = new PC2ThrottlePositionPipeline(packetParser);
             lapTimesStore.Observe(lapTimesPipeline);
             throttlePipeline.Subscribe(new Observer<ThrottlePosition>(throttle => {
-                Console.WriteLine(throttle.Value);
+                Console.WriteLine("Throttle: {0}; Time: {1}", throttle.Value, throttle.TimeStamp);
             }));
             rawHandler.Start();
             while(true){
