@@ -61,5 +61,13 @@ namespace CoreService {
             var id = bson["_id"].AsObjectId;
             return new ParticipantLapTimes(new Key(id), new Key(sessionId), sessionType, participantIndex, lapTimes);
         }
+
+        public override string ToString() {
+            return "ID: " + SessionId + Environment.NewLine +
+            "Type: " + SessionType + Environment.NewLine +
+            lapTimes.Select(lapTime => {
+                return "Lap " + lapTime.Key + ": " + lapTime.Value.lapTime + "; Sector 1: " + lapTime.Value.sector1Time + "; Sector 2: " + lapTime.Value.sector2Time + "; Sector 3: " + lapTime.Value.sector3Time;
+            });
+        }
     }
 }
