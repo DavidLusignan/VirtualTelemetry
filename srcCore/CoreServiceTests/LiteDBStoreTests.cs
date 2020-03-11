@@ -1,4 +1,5 @@
 ﻿using CoreService;
+using CoreService.Data;
 using CoreService.Storage;
 using CoreService.Storage.DTOs;
 using Global.Enumerable;
@@ -25,7 +26,7 @@ namespace CoreServiceTests {
                     1, new ParticipantLapTime(0.123, 0.456, 0.789, 1)
                 }
             };
-            var lapTimes = new ParticipantLapTimes(Key.Create(), 0, lapTimeDic);
+            var lapTimes = new ParticipantLapTimes(Key.Create(), Key.Create(), SessionType.Practice, 0, lapTimeDic);
             var db = new LiteDatabase("test.db");
             var store = new CollectionStore<ParticipantLapTimes>(db);
             store.DeleteAll();

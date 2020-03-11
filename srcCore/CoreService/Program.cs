@@ -21,14 +21,20 @@ namespace CoreService {
             var db = new LiteDatabase("storage.db");
             var sessionPipeline = new PC2SessionIDPipeline(0, packetParser);
             var lapTimesStore = new ParticipantLapTimesStore(db);
-            var lapTimesPipeline = new PC2StdLapTimePipeline(packetParser, lapTimesStore);
+            var lapTimesPipeline = new PC2StdLapTimePipeline(packetParser, sessionPipeline, lapTimesStore);
             lapTimesStore.Observe(lapTimesPipeline);
             sessionPipeline.Subscribe(new Observer<SessionState>(session => {
-                Console.WriteLine(session);
+                //Console.WriteLine(session);
             }));
             lapTimesPipeline.Subscribe(new Observer<ParticipantLapTimes>(lapTimes => {
                 try {
-                    Console.WriteLine(lapTimesStore.LoadAll().First(lt => lt.participantIndex.Equals(0)).lapTimes.Last().Value.lapTime);
+                    //Console.WriteLine(lapTimesStore.LoadAll().First(lt => lt.participantIndex.Equals(0)).lapTimes.Last().Value.lapTime);
+                    Console.Clear();
+                    Console.WriteLine("ID: " + lapTimes.SessionId);
+                    Console.WriteLine("Type: " + lapTimes.SessionType);
+                    lapTimes.lapTimes.ForEach(lapTime => {
+                        Console.WriteLine("Lap " + lapTime.Key + ": " + lapTime.Value.lapTime);
+                    });
                 } catch {
 
                 }

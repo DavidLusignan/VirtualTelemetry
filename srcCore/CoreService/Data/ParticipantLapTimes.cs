@@ -4,16 +4,21 @@ using CoreService.Storage.DTOs;
 using CoreService.UDPProjectCars2.PacketParser;
 using Global.Enumerable;
 using LiteDB;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace CoreService {
     public class ParticipantLapTimes : IStorable {
         public Key Id { get; }
+        public Key SessionId { get; }
+        public SessionType SessionType { get; }
         public int participantIndex;
         public IDictionary<int, ParticipantLapTime> lapTimes;
-        public ParticipantLapTimes(Key id, int participantIndex, IDictionary<int, ParticipantLapTime> lapTimes) {
-            this.Id = id;
+        public ParticipantLapTimes(Key id, Key sessionId, SessionType sessionType, int participantIndex, IDictionary<int, ParticipantLapTime> lapTimes) {
+            Id = id;
+            SessionId = sessionId;
+            SessionType = sessionType;
             this.participantIndex = participantIndex;
             this.lapTimes = lapTimes;
         }
@@ -21,6 +26,8 @@ namespace CoreService {
         public static BsonDocument ParticipantLapTimesToBson(ParticipantLapTimes dto) {
             var bsonDoc = new BsonDocument();
             bsonDoc["_id"] = dto.Id.AsLiteDB();
+            bsonDoc["sessionId"] = dto.SessionId.AsLiteDB();
+            bsonDoc["sessionType"] = dto.SessionType.ToString();
             bsonDoc["participantIndex"] = new BsonValue(dto.participantIndex);
             bsonDoc["lapTimes"] = new BsonArray(dto.lapTimes.Select(lapTime => {
                 var lapTimeDoc = new BsonDocument();
@@ -49,8 +56,10 @@ namespace CoreService {
                 lapTimes = new Dictionary<int, ParticipantLapTime>();
             }
             var participantIndex = bson["participantIndex"].AsInt32;
+            var sessionType = Enum.Parse<SessionType>(bson["sessionType"].AsString);
+            var sessionId = bson["sessionId"].AsObjectId;
             var id = bson["_id"].AsObjectId;
-            return new ParticipantLapTimes(new Key(id), participantIndex, lapTimes);
+            return new ParticipantLapTimes(new Key(id), new Key(sessionId), sessionType, participantIndex, lapTimes);
         }
     }
 }
