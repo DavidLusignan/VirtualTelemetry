@@ -14,7 +14,7 @@ namespace CoreServiceTests {
     [TestFixture]
     public class LiteDBStoreTests {
         [SetUp] public void Setup() {
-            DTOBsonConversion.Setup();
+            BsonConversion.Setup();
         }
 
         [Test] public void StoreRetrieveLapTimes() {

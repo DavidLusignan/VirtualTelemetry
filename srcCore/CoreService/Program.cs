@@ -15,7 +15,7 @@ namespace CoreService {
     class Program {
         const int DEFAULT_PORT = 5606;  
         static void Main(string[] args) {
-            DTOBsonConversion.Setup();
+            BsonConversion.Setup();
             var rawHandler = PC2RawHandler.Create(DEFAULT_PORT);
             var packetParser = new PC2PacketParser(rawHandler);
             var db = new LiteDatabase("storage.db");
