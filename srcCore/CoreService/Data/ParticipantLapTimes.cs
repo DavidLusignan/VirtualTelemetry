@@ -23,13 +23,13 @@ namespace CoreService {
             this.lapTimes = lapTimes;
         }
         
-        public static BsonDocument ParticipantLapTimesToBson(ParticipantLapTimes dto) {
+        public static BsonDocument ToBson(ParticipantLapTimes entity) {
             var bsonDoc = new BsonDocument();
-            bsonDoc["_id"] = dto.Id.AsLiteDB();
-            bsonDoc["sessionId"] = dto.SessionId.AsLiteDB();
-            bsonDoc["sessionType"] = dto.SessionType.ToString();
-            bsonDoc["participantIndex"] = new BsonValue(dto.participantIndex);
-            bsonDoc["lapTimes"] = new BsonArray(dto.lapTimes.Select(lapTime => {
+            bsonDoc["_id"] = entity.Id.AsLiteDB();
+            bsonDoc["sessionId"] = entity.SessionId.AsLiteDB();
+            bsonDoc["sessionType"] = entity.SessionType.ToString();
+            bsonDoc["participantIndex"] = new BsonValue(entity.participantIndex);
+            bsonDoc["lapTimes"] = new BsonArray(entity.lapTimes.Select(lapTime => {
                 var lapTimeDoc = new BsonDocument();
                 lapTimeDoc["lapNumber"] = new BsonValue(lapTime.Key);
                 lapTimeDoc["lapTime"] = new BsonValue(lapTime.Value.lapTime);
@@ -41,7 +41,7 @@ namespace CoreService {
             return bsonDoc;
         }
 
-        public static ParticipantLapTimes BsonToParticipantLapTimes(BsonValue bson) {
+        public static ParticipantLapTimes FromBson(BsonValue bson) {
             IDictionary<int, ParticipantLapTime> lapTimes;
             if (!bson["lapTimes"].IsNull) {
                 lapTimes = bson["lapTimes"].AsArray.Select(lapTimeBson => {
