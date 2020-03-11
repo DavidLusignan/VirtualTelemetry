@@ -29,12 +29,14 @@ namespace CoreService {
             lapTimesPipeline.Subscribe(new Observer<ParticipantLapTimes>(lapTimes => {
                 try {
                     //Console.WriteLine(lapTimesStore.LoadAll().First(lt => lt.participantIndex.Equals(0)).lapTimes.Last().Value.lapTime);
-                    Console.Clear();
-                    Console.WriteLine("ID: " + lapTimes.SessionId);
-                    Console.WriteLine("Type: " + lapTimes.SessionType);
-                    lapTimes.lapTimes.ForEach(lapTime => {
-                        Console.WriteLine("Lap " + lapTime.Key + ": " + lapTime.Value.lapTime);
-                    });
+                    if(lapTimes.participantIndex == 0) {
+                        Console.Clear();
+                        Console.WriteLine("ID: " + lapTimes.SessionId);
+                        Console.WriteLine("Type: " + lapTimes.SessionType);
+                        lapTimes.lapTimes.ForEach(lapTime => {
+                            Console.WriteLine("Lap " + lapTime.Key + ": " + lapTime.Value.lapTime);
+                        });
+                    }
                 } catch {
 
                 }
