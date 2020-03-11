@@ -19,6 +19,7 @@ namespace CoreService.UDPProjectCars2.PacketParser {
             this.partialPacketNumber = partialPacketNumber;
             this.packetType = (PC2PacketType)packetType;
             this.packetVersion = packetVersion;
+            this.timeStamp = timeStamp;
         }
 
         public static PC2PacketMeta Create(PC2RawPacket rawPacket) {
