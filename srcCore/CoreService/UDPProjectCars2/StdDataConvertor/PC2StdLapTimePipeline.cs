@@ -15,12 +15,12 @@ namespace CoreService {
         private object _stateLock = new object();
         private List<IObserver<ParticipantLapTimes>> observers;
         private ParticipantLapTimesStore _lapTimesStore { get; }
-        private SessionState _currentSession { get; set; }
-        public PC2StdLapTimePipeline(IObservable<PC2BasePacket> packetHandler, IObservable<SessionState> sessionStates, ParticipantLapTimesStore lapTimesStore) {
+        private SessionTypeEntry _currentSession { get; set; }
+        public PC2StdLapTimePipeline(IObservable<PC2BasePacket> packetHandler, IObservable<SessionTypeEntry> sessionStates, ParticipantLapTimesStore lapTimesStore) {
             observers = new List<IObserver<ParticipantLapTimes>>();
             _lapTimesStore = lapTimesStore;
             packetHandler.Subscribe(new Observer<PC2BasePacket>(OnState));
-            sessionStates.Subscribe(new Observer<SessionState>(OnSession));
+            sessionStates.Subscribe(new Observer<SessionTypeEntry>(OnSession));
         }
 
         private void OnState(PC2BasePacket newState) {
@@ -45,7 +45,7 @@ namespace CoreService {
             }
         }
 
-        private void OnSession(SessionState session) {
+        private void OnSession(SessionTypeEntry session) {
             lock(_stateLock) {
                 _currentSession = session;
             }

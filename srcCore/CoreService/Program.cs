@@ -19,7 +19,7 @@ namespace CoreService {
             var rawHandler = PC2RawHandler.Create(DEFAULT_PORT);
             var packetParser = new PC2PacketParser(rawHandler);
             var db = new LiteDatabase("storage.db");
-            var sessionPipeline = new PC2SessionIDPipeline(0, packetParser);
+            var sessionPipeline = new PC2SessionTypePipeline(packetParser);
             var lapTimesStore = new ParticipantLapTimesStore(db);
             var sessionStore = new SessionStore(db);
             var trackInfoStore = new SessionTrackInfoStore(db);

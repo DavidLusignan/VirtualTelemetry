@@ -4,33 +4,29 @@ using LiteDB;
 using System;
 
 namespace CoreService.Data {
-    public class SessionState : IStorable {
+    public class SessionTypeEntry : IStorable {
         public Key Id { get; }
         public SessionType SessionType { get; }
-        public SessionProgress SessionProgress { get; }
-        public SessionState(Key id, SessionType sessionType, SessionProgress sessionProgress) {
+        public SessionTypeEntry(Key id, SessionType sessionType) {
             Id = id;
             SessionType = sessionType;
-            SessionProgress = sessionProgress;
         }
 
         public override string ToString() {
-            return "SessionID: " + Id.ToString() + "; SessionType: " + SessionType + "; SessionProgress: " + SessionProgress;
+            return "SessionID: " + Id.ToString() + "; SessionType: " + SessionType;
         }
 
-        internal static BsonValue ToBson(SessionState entity) {
+        internal static BsonValue ToBson(SessionTypeEntry entity) {
             var bsonDoc = new BsonDocument();
             bsonDoc["_id"] = entity.Id.AsLiteDB();
             bsonDoc["sessionType"] = entity.SessionType.ToString();
-            bsonDoc["sessionProgress"] = entity.SessionProgress.ToString();
             return bsonDoc;
         }
 
-        internal static SessionState FromBson(BsonValue bson) {
+        internal static SessionTypeEntry FromBson(BsonValue bson) {
             var id = bson["_id"].AsObjectId;
             var sessionType = Enum.Parse<SessionType>(bson["sessionType"].AsString);
-            var sessionProgress = Enum.Parse<SessionProgress>(bson["sessionProgress"].AsString);
-            return new SessionState(new Key(id), sessionType, sessionProgress);
+            return new SessionTypeEntry(new Key(id), sessionType);
         }
     }
 

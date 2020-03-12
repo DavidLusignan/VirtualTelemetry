@@ -9,46 +9,26 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace CoreService.UDPProjectCars2.StdDataConvertor {
-    public class PC2SessionIDPipeline : IObservable<SessionState> {
+    public class PC2SessionTypePipeline : IObservable<SessionTypeEntry> {
         private object _stateLock = new object();
-        private List<IObserver<SessionState>> _observers;
-        private int _viewedParticipant { get; }
-        private SessionState _currentState { get; set; }
+        private List<IObserver<SessionTypeEntry>> _observers;
+        private SessionTypeEntry _currentState { get; set; }
 
-        public PC2SessionIDPipeline(int viewedParticipant, IObservable<PC2BasePacket> packetHandler) {
-            _viewedParticipant = viewedParticipant;
-            _currentState = new SessionState(Key.Create(), SessionType.Invalid, SessionProgress.Invalid);
-            _observers = new List<IObserver<SessionState>>();
+        public PC2SessionTypePipeline(IObservable<PC2BasePacket> packetHandler) {
+            _currentState = new SessionTypeEntry(Key.Create(), SessionType.Invalid);
+            _observers = new List<IObserver<SessionTypeEntry>>();
             packetHandler.Subscribe(new Observer<PC2BasePacket>(OnState));
         }
 
         private void OnState(PC2BasePacket newState) {
             try {
                 var packetType = newState.baseUDP.packetType;
-                if (packetType.Equals(PC2PacketType.Timings)) {
-                    var timings = (PCars2Timings)newState;
-                    OnTiming(timings);
-                } else if (packetType.Equals(PC2PacketType.GameState)) {
+                if (packetType.Equals(PC2PacketType.GameState)) {
                     var gameState = (PC2GameStatePacket)newState;
                     OnGameState(gameState);
                 }
             } catch {
 
-            }
-        }
-
-        private void OnTiming(PCars2Timings timings) {
-            var viewed = timings.participants.First(p => p.participantIndex.Equals(_viewedParticipant));
-            var convertedProgress = ToSessionProgress(viewed.raceState);
-            UpdateIfChanged(convertedProgress);
-        }
-
-        private void UpdateIfChanged(SessionProgress sessionProgress) {
-            lock(_stateLock) {
-                if (!_currentState.SessionProgress.Equals(sessionProgress)) {
-                    _currentState = new SessionState(_currentState.Id, _currentState.SessionType, sessionProgress);
-                    NotifyAll(_currentState);
-                }
             }
         }
 
@@ -60,21 +40,21 @@ namespace CoreService.UDPProjectCars2.StdDataConvertor {
         private void UpdateIfChanged(SessionType sessionType) {
             lock(_stateLock) {
                 if (!_currentState.SessionType.Equals(sessionType)) {
-                    _currentState = new SessionState(Key.Create(), sessionType, _currentState.SessionProgress);
+                    _currentState = new SessionTypeEntry(Key.Create(), sessionType);
                     NotifyAll(_currentState);
                 }
             }
         }
 
-        private void NotifyAll(SessionState sessionState) {
+        private void NotifyAll(SessionTypeEntry sessionState) {
             _observers.ForEach(o => o.OnNext(sessionState));
         }
 
-        public IDisposable Subscribe(IObserver<SessionState> observer) {
+        public IDisposable Subscribe(IObserver<SessionTypeEntry> observer) {
             if (!_observers.Contains(observer)) {
                 _observers.Add(observer);
             }
-            return new Unsubscriber<SessionState>(_observers, observer);
+            return new Unsubscriber<SessionTypeEntry>(_observers, observer);
         }
 
         private SessionProgress ToSessionProgress(PC2RaceState raceState) {

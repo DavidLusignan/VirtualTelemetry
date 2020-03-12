@@ -10,11 +10,11 @@ using System.Text;
 namespace CoreService.UDPProjectCars2.StdDataConvertor {
     public class PC2SessionTrackInfoPipeline : IObservable<SessionTrackInfo> {
         private List<IObserver<SessionTrackInfo>> _observers;
-        private SessionState _currentSession { get; set; }
-        public PC2SessionTrackInfoPipeline(IObservable<PC2BasePacket> packetHandler, IObservable<SessionState> sessionStates) {
+        private SessionTypeEntry _currentSession { get; set; }
+        public PC2SessionTrackInfoPipeline(IObservable<PC2BasePacket> packetHandler, IObservable<SessionTypeEntry> sessionStates) {
             _observers = new List<IObserver<SessionTrackInfo>>();
             packetHandler.Subscribe(new Observer<PC2BasePacket>(OnState));
-            sessionStates.Subscribe(new Observer<SessionState>(OnSession));
+            sessionStates.Subscribe(new Observer<SessionTypeEntry>(OnSession));
         }
 
         private void OnState(PC2BasePacket newState) {
@@ -33,7 +33,7 @@ namespace CoreService.UDPProjectCars2.StdDataConvertor {
             }
         }
 
-        private void OnSession(SessionState session) {
+        private void OnSession(SessionTypeEntry session) {
             _currentSession = session;
         }
 
