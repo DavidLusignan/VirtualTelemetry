@@ -9,14 +9,14 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace CoreService.UDPProjectCars2.StdDataConvertor {
-    public class PC2SessionTypePipeline : IObservable<SessionTypeEntry> {
+    public class PC2SessionTypePipeline : IObservable<SessionEntry> {
         private object _stateLock = new object();
-        private List<IObserver<SessionTypeEntry>> _observers;
-        private SessionTypeEntry _currentState { get; set; }
+        private List<IObserver<SessionEntry>> _observers;
+        private SessionEntry _currentSession { get; set; }
 
         public PC2SessionTypePipeline(IObservable<PC2BasePacket> packetHandler) {
-            _currentState = new SessionTypeEntry(Key.Create(), SessionType.Invalid);
-            _observers = new List<IObserver<SessionTypeEntry>>();
+            _currentSession = new SessionEntry(Key.Create(), SessionType.Invalid, DateTime.MinValue, null);
+            _observers = new List<IObserver<SessionEntry>>();
             packetHandler.Subscribe(new Observer<PC2BasePacket>(OnState));
         }
 
@@ -39,22 +39,24 @@ namespace CoreService.UDPProjectCars2.StdDataConvertor {
 
         private void UpdateIfChanged(SessionType sessionType) {
             lock(_stateLock) {
-                if (!_currentState.SessionType.Equals(sessionType)) {
-                    _currentState = new SessionTypeEntry(Key.Create(), sessionType);
-                    NotifyAll(_currentState);
+                if (!_currentSession.SessionType.Equals(sessionType)) {
+                    var previousSession = new SessionEntry(_currentSession.Id, _currentSession.SessionType, _currentSession.Beginning, DateTime.UtcNow);
+                    _currentSession = new SessionEntry(Key.Create(), sessionType, DateTime.UtcNow, null);
+                    NotifyAll(previousSession);
+                    NotifyAll(_currentSession);
                 }
             }
         }
 
-        private void NotifyAll(SessionTypeEntry sessionState) {
+        private void NotifyAll(SessionEntry sessionState) {
             _observers.ForEach(o => o.OnNext(sessionState));
         }
 
-        public IDisposable Subscribe(IObserver<SessionTypeEntry> observer) {
+        public IDisposable Subscribe(IObserver<SessionEntry> observer) {
             if (!_observers.Contains(observer)) {
                 _observers.Add(observer);
             }
-            return new Unsubscriber<SessionTypeEntry>(_observers, observer);
+            return new Unsubscriber<SessionEntry>(_observers, observer);
         }
 
         private SessionProgress ToSessionProgress(PC2RaceState raceState) {

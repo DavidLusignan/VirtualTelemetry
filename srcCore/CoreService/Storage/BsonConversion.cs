@@ -12,8 +12,8 @@ namespace CoreService.Storage.DTOs {
                 serialize: entity => ParticipantLapTimes.ToBson(entity),
                 deserialize: bson => ParticipantLapTimes.FromBson(bson));
             BsonMapper.Global.RegisterType(
-                serialize: entity => SessionTypeEntry.ToBson(entity),
-                deserialize: bson => SessionTypeEntry.FromBson(bson));
+                serialize: entity => SessionEntry.ToBson(entity),
+                deserialize: bson => SessionEntry.FromBson(bson));
             BsonMapper.Global.RegisterType(
                 serialize: entity => SessionTrackInfo.ToBson(entity),
                 deserialize: bson => SessionTrackInfo.FromBson(bson));
