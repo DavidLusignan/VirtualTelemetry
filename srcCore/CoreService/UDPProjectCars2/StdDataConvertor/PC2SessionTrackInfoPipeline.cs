@@ -8,10 +8,10 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace CoreService.UDPProjectCars2.StdDataConvertor {
-    public class SessionTrackInfoPipeline : IObservable<SessionTrackInfo> {
+    public class PC2SessionTrackInfoPipeline : IObservable<SessionTrackInfo> {
         private List<IObserver<SessionTrackInfo>> _observers;
         private SessionState _currentSession { get; set; }
-        public SessionTrackInfoPipeline(IObservable<PC2BasePacket> packetHandler, IObservable<SessionState> sessionStates) {
+        public PC2SessionTrackInfoPipeline(IObservable<PC2BasePacket> packetHandler, IObservable<SessionState> sessionStates) {
             _observers = new List<IObserver<SessionTrackInfo>>();
             packetHandler.Subscribe(new Observer<PC2BasePacket>(OnState));
             sessionStates.Subscribe(new Observer<SessionState>(OnSession));
@@ -21,8 +21,10 @@ namespace CoreService.UDPProjectCars2.StdDataConvertor {
             try {
                 if (newState.baseUDP.packetType.Equals(PC2PacketType.RaceDefinition)) {
                     var raceDef = (PC2RaceDefinition)newState;
-                    var trackName = Encoding.UTF8.GetString(raceDef.trackLocation);
-                    var trackVariation = Encoding.UTF8.GetString(raceDef.trackVariation);
+                    var trackNameZero = Array.IndexOf(raceDef.trackLocation, (byte)0);
+                    var trackName = Encoding.ASCII.GetString(raceDef.trackLocation, 0, trackNameZero < 0 ? raceDef.trackLocation.Length : trackNameZero);
+                    var trackVariationZero = Array.IndexOf(raceDef.trackVariation, (byte)0);
+                    var trackVariation = Encoding.ASCII.GetString(raceDef.trackVariation, 0, trackVariationZero < 0 ? raceDef.trackVariation.Length : trackVariationZero);
                     var trackInfo = new SessionTrackInfo(_currentSession.Id, trackName, trackVariation);
                     NotifyAll(trackInfo);
                 }
