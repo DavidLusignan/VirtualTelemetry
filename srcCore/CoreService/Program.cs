@@ -22,17 +22,29 @@ namespace CoreService {
             var sessionPipeline = new PC2SessionIDPipeline(0, packetParser);
             var lapTimesStore = new ParticipantLapTimesStore(db);
             var sessionStore = new SessionStore(db);
+            var trackInfoStore = new SessionTrackInfoStore(db);
             var lapTimesPipeline = new PC2StdLapTimePipeline(packetParser, sessionPipeline, lapTimesStore);
             var throttlePipeline = new PC2ThrottlePositionPipeline(packetParser);
+            var trackInfoPipeline = new PC2SessionTrackInfoPipeline(packetParser, sessionPipeline);
             lapTimesStore.Observe(lapTimesPipeline);
             sessionStore.Observe(sessionPipeline);
+            trackInfoStore.Observe(trackInfoPipeline);
             rawHandler.Start();
             while(true){
-                Console.Clear();
-                sessionStore.LoadAll().ForEach(session => {
-                    Console.WriteLine("SessionId: {0}; SessionType: {1}", session.Id, session.SessionType);
-                });
-                Console.ReadLine();
+                try {
+                    Console.Clear();
+                    sessionStore.LoadAll().ForEach(session => {
+                        try {
+                            var track = trackInfoStore.LoadWithId(session.Id);
+                            Console.WriteLine("SessionId: {0}; SessionType: {1}; Track: {2} {3}", session.Id, session.SessionType, track.TrackName, track.TrackVariation);
+                        } catch {
+                            
+                        }
+                    });
+                    Console.ReadLine();
+                } catch {
+
+                }
             }
         }
     }
