@@ -7,9 +7,9 @@ namespace CoreService.UDPProjectCars2.PacketParser {
         public const int MAX_PARTICIPANTS = 32;
         public uint participantChangedTimestamp;
         public IEnumerable<PCars2ParticipantStatsInfo> participantStats;
-        public static PCars2TimeStatsData Create(PC2RawPacket rawPacket, PC2PacketMeta baseUDP) {
-            var timeStatsData = new PCars2TimeStatsData();
-            timeStatsData.baseUDP = baseUDP;
+        public PCars2TimeStatsData(PC2PacketMeta meta) : base(meta) { }
+        public static PCars2TimeStatsData Create(PC2RawPacket rawPacket, PC2PacketMeta meta) {
+            var timeStatsData = new PCars2TimeStatsData(meta);
             timeStatsData.participantChangedTimestamp = rawPacket.Data.ReadUInt32();
             timeStatsData.participantStats = Enumerable.Range(0, PCars2TimeStatsData.MAX_PARTICIPANTS).Select(i => {
                 var participantStatsInfo = new PCars2ParticipantStatsInfo();

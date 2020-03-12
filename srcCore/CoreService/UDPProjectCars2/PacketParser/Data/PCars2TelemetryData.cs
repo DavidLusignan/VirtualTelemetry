@@ -147,9 +147,9 @@ namespace CoreService.UDPProjectCars2.PacketParser {
         public float engineTorque;
         public byte wingsFront;
         public byte wingsRear;
+        public PCars2TelemetryData(PC2PacketMeta meta) : base(meta) { }
         public static PCars2TelemetryData Create(PC2RawPacket rawPacket, PC2PacketMeta meta) {
-            var telemetryData = new PCars2TelemetryData();
-            telemetryData.baseUDP = meta;
+            var telemetryData = new PCars2TelemetryData(meta);
             telemetryData.viewedParticipantIndex = rawPacket.Data.ReadSByte();
             telemetryData.unfilteredThrottle = rawPacket.Data.ReadByte();
             telemetryData.unfilteredBrake = rawPacket.Data.ReadByte();

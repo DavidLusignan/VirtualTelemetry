@@ -7,8 +7,7 @@ namespace CoreService.UDPProjectCars2.PacketParser.Data {
         public ushort buildVersionNumber { get; }
         public PC2GameState gameState { get; }
         public PC2SessionState sessionState { get; }
-        public PC2GameStatePacket(PC2PacketMeta baseUDP, ushort buildVersionNumber, PC2GameState gameState, PC2SessionState sessionState) {
-            this.baseUDP = baseUDP;
+        public PC2GameStatePacket(PC2PacketMeta meta, ushort buildVersionNumber, PC2GameState gameState, PC2SessionState sessionState) : base(meta) {
             this.buildVersionNumber = buildVersionNumber;
             this.gameState = gameState;
             this.sessionState = sessionState;

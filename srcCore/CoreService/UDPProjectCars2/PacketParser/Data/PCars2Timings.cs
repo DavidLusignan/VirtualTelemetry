@@ -12,10 +12,9 @@ namespace CoreService.UDPProjectCars2.PacketParser {
         public float splitTimeBehind;
         public float splitTime;
         public IEnumerable<PCars2ParticipantTiming> participants;
-
-        public static PCars2Timings Create(PC2RawPacket rawPacket, PC2PacketMeta baseUDP) {
-            var timings = new PCars2Timings();
-            timings.baseUDP = baseUDP;
+        public PCars2Timings(PC2PacketMeta meta) : base(meta) { }
+        public static PCars2Timings Create(PC2RawPacket rawPacket, PC2PacketMeta meta) {
+            var timings = new PCars2Timings(meta);
             timings.numberParticipants = rawPacket.Data.ReadSByte();
             timings.participantsChangedTimestamp = rawPacket.Data.ReadUInt32();
             timings.eventTimeRemaining = rawPacket.Data.ReadSingle();
