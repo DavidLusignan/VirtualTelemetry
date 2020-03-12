@@ -1,4 +1,5 @@
 ﻿using CoreService.Data;
+using CoreService.UDPProjectCars2.StdDataConvertor;
 using LiteDB;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,9 @@ namespace CoreService.Storage.DTOs {
             BsonMapper.Global.RegisterType(
                 serialize: entity => SessionState.ToBson(entity),
                 deserialize: bson => SessionState.FromBson(bson));
+            BsonMapper.Global.RegisterType(
+                serialize: entity => SessionTrackInfo.ToBson(entity),
+                deserialize: bson => SessionTrackInfo.FromBson(bson));
         }
     }
 }
