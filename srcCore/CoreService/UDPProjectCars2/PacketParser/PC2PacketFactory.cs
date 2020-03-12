@@ -31,6 +31,7 @@ namespace CoreService.UDPProjectCars2.PacketParser {
                 case PC2PacketType.GameState:
                     return PC2GameStatePacket.Create(rawPacket, meta);
                 case PC2PacketType.RaceDefinition:
+                    return PC2RaceDefinition.Create(rawPacket, meta);
                 case PC2PacketType.Participants:
                 case PC2PacketType.WeatherState:
                 case PC2PacketType.VehicleNames:
