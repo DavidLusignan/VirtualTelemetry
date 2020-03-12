@@ -12,5 +12,9 @@ namespace CoreService.Storage.SpecificStores {
         private void OnState(SessionTrackInfo trackInfo) {
             Upsert(trackInfo);
         }
+
+        internal SessionTrackInfo LoadWithId(Key id) {
+            return _collection.FindById(id.AsLiteDB());
+        }
     }
 }

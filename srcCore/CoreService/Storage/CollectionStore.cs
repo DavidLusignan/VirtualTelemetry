@@ -19,7 +19,7 @@ namespace CoreService.Storage {
     }
 
     public class CollectionStore<T> : IStore<T> where T : IStorable {
-        private ILiteCollection<T> _collection;
+        protected ILiteCollection<T> _collection;
         public CollectionStore(LiteDatabase db) {
             _collection = db.GetCollection<T>();
         }
