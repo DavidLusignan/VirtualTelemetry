@@ -37,6 +37,7 @@ namespace CoreService {
                         try {
                             var track = trackInfoStore.LoadWithId(session.Id);
                             Console.WriteLine("SessionId: {0}; SessionType: {1}; Track: {2} {3}", session.Id, session.SessionType, track.TrackName, track.TrackVariation);
+                            Console.WriteLine("Started: {0}; Ended: {1}", session.Beginning.ToLongTimeString(), session.End.HasValue ? session.End.Value.ToLongTimeString() : "unfinished");
                         } catch {
                             
                         }

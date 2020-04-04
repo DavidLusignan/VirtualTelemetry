@@ -1,0 +1,88 @@
+﻿@page
+
+<script type="text/javascript" src="~/lib/jquery-1.11.1/dist/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="~/lib/goldenlayout/dist/goldenlayout.min.js"></script>
+<script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+<script src="~/lib/chart.js/dist/Chart.min.js"></script>
+<link type="text/css" rel="stylesheet" href="~/css/goldenlayout-base.css" />
+<link type="text/css" rel="stylesheet" href="~/css/goldenlayout-dark-theme.css" />
+
+<script>
+    window.onload = function () {
+
+        Chart.defaults.global.animation.duration = 0;
+        Chart.defaults.global.animation.easing = 'linear';
+
+        var config = {
+            content: [{
+                type: 'row',
+                content: [{
+                    type: 'component',
+                    componentName: 'testComponent',
+                    componentState: { label: 'A' }
+                }, {
+                    type: 'column',
+                    content: [{
+                        type: 'component',
+                        componentName: 'testComponent',
+                        componentState: { label: 'B' }
+                    }, {
+                        type: 'component',
+                        componentName: 'testComponent',
+                        componentState: { label: 'C' }
+                    }]
+                }]
+            }]
+        }
+
+        var myLayout = new GoldenLayout(config);
+        myLayout.registerComponent('testComponent', function (container, componentState) {
+            container.getElement().html('<canvas id="canvas' + componentState.label + '" width="300" height="75"></canvas>');
+        });
+
+        myLayout.init();
+        
+        var ctxA = document.getElementById('canvasA');
+        var ctxB = document.getElementById('canvasB');
+        var ctxC = document.getElementById('canvasC');
+        var chartContent = {
+            type: 'line',
+            data: {
+                labels: [
+                    1
+                ],
+                datasets: [{
+                    label: "throttle",
+                    data: [{
+                        x: 0,
+                        y: 3
+                    }],
+                    backgroundColor: Chart.helpers.color('rgb(75, 192, 192)').alpha(1.0).rgbString(),
+                    lineTension: 0
+                }]
+            },
+            options: {}
+        };
+        window.myChartA = new Chart(ctxA, chartContent);
+        window.myChartB = new Chart(ctxB, chartContent);
+        window.myChartC = new Chart(ctxC, chartContent);
+
+        var i = 1;
+        this.setInterval(function () {
+            addData(window.myChartA, i);
+            addData(window.myChartB, i);
+            addData(window.myChartC, i);
+            i++;
+        }, 16);
+    }
+
+    function addData(myChart, i) {
+        myChart.data.labels.push(i);
+        myChart.data.datasets[0].data.push({ x: i, y: Math.random() * 4 });
+        if (myChart.data.labels.length > 300) {
+            myChart.data.labels.shift();
+            myChart.data.datasets[0].data.shift();
+        }
+        myChart.update();
+    }
+</script>

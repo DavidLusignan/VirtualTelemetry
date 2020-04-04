@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Global", "CoreVirtualTeleme
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreService", "CoreService\CoreService.csproj", "{85D15D4A-6122-4655-AC04-57101B213440}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreServiceTests", "CoreServiceTests\CoreServiceTests.csproj", "{46793E6F-EC9D-4203-94B0-7FD23C1DC74C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreServiceTests", "CoreServiceTests\CoreServiceTests.csproj", "{46793E6F-EC9D-4203-94B0-7FD23C1DC74C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebUI", "WebUI\WebUI.csproj", "{EA14A582-850F-4AF1-B6FD-A1471C6DAC0C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{46793E6F-EC9D-4203-94B0-7FD23C1DC74C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46793E6F-EC9D-4203-94B0-7FD23C1DC74C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46793E6F-EC9D-4203-94B0-7FD23C1DC74C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA14A582-850F-4AF1-B6FD-A1471C6DAC0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA14A582-850F-4AF1-B6FD-A1471C6DAC0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA14A582-850F-4AF1-B6FD-A1471C6DAC0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA14A582-850F-4AF1-B6FD-A1471C6DAC0C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
