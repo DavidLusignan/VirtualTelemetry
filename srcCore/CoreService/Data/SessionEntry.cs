@@ -36,7 +36,7 @@ namespace CoreService.Data {
             var sessionType = Enum.Parse<SessionType>(bson["sessionType"].AsString);
             var start = bson["beginning"].AsDateTime;
             DateTime? end;
-            if (bson["end"] != null) {
+            if (!bson["end"].IsNull) {
                 end = bson["end"].AsDateTime;
             } else {
                 end = null;
