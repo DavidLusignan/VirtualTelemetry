@@ -1,3 +1,3 @@
-﻿function createThrottleChart() {
-
+﻿export function createThrottleChart() {
+    console.log("test");
 }
